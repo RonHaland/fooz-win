@@ -30,7 +30,7 @@ export function ConfirmModal({
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-lg bg-slate-700/50 text-slate-300 hover:bg-slate-700/70 transition-colors"
+            className="px-4 py-2 rounded-lg bg-slate-700/40 text-slate-300 hover:bg-slate-700/70 transition-colors"
           >
             {cancelText}
           </button>
@@ -40,7 +40,7 @@ export function ConfirmModal({
               onConfirm();
               onClose();
             }}
-            className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors"
+            className="px-4 py-2 rounded-lg bg-red-800/80 text-white hover:bg-red-800 transition-colors"
           >
             {confirmText}
           </button>

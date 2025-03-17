@@ -38,7 +38,10 @@ export function generateBalancedTeams(
         .join("-");
 
       if (!pairingTracker.has(team1Key) && !pairingTracker.has(team2Key)) {
-        gameTeams.push({ players: team1 }, { players: team2 });
+        gameTeams.push(
+          { players: team1, score: 0 },
+          { players: team2, score: 0 }
+        );
         pairingTracker.add(team1Key);
         pairingTracker.add(team2Key);
         break;
@@ -54,7 +57,10 @@ export function generateBalancedTeams(
       // just use the current arrangement of players
       const team1 = [playingPlayers[0], playingPlayers[1]];
       const team2 = [playingPlayers[2], playingPlayers[3]];
-      gameTeams.push({ players: team1 }, { players: team2 });
+      gameTeams.push(
+        { players: team1, score: 0 },
+        { players: team2, score: 0 }
+      );
     }
 
     results.push({

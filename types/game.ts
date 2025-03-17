@@ -13,3 +13,12 @@ export type Game = {
   teams: Team[];
   sittingOut?: Player[];
 };
+
+export type Tournament = {
+  id: string;
+  name: string;
+  players: Player[];
+  games: Game[];
+  createdAt: string;
+  updatedAt: string;
+};

@@ -1,61 +1,40 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { generateBalancedTeams } from "@/utils/generateTeams";
-import { Game, Player } from "@/types/game";
+import { Game, Player, Tournament } from "@/types/game";
 import { PlayerStats } from "./PlayerStats";
 import { GamesList } from "./GamesList";
 import { PlusIcon } from "./icons/PlusIcon";
 import { ErrorModal } from "./ErrorModal";
 import { Scoreboard } from "./Scoreboard";
 
-const INITIAL_PLAYERS: Player[] = [
-  { name: "Alice", id: 1, isEnabled: true },
-  { name: "Bob", id: 2, isEnabled: true },
-  { name: "Charlie", id: 3, isEnabled: true },
-  { name: "David", id: 4, isEnabled: true },
-  { name: "Eve", id: 5, isEnabled: true },
-  { name: "Frank", id: 6, isEnabled: true },
-  { name: "Grace", id: 7, isEnabled: true },
-  { name: "Hank", id: 8, isEnabled: true },
-  { name: "Ian", id: 9, isEnabled: true },
-  { name: "Jack", id: 10, isEnabled: true },
-];
+type GamesContainerProps = {
+  tournament: Tournament;
+  onUpdate: (tournament: Tournament) => void;
+};
 
-// Initialize empty games played record
-const initialGamesPlayed = INITIAL_PLAYERS.reduce((acc, player) => {
-  acc[player.id] = 0;
-  return acc;
-}, {} as Record<number, number>);
-
-export function GamesContainer() {
-  const [players, setPlayers] = useState<Player[]>(INITIAL_PLAYERS);
-  const [games, setGames] = useState<Game[]>(() => {
-    const generatedGames = generateBalancedTeams(
-      players.filter((p) => p.isEnabled),
-      0
-    );
-    return generatedGames.map((game) => ({
-      ...game,
-      teams: game.teams.map((team) => ({
-        ...team,
-        score: 0,
-      })),
-    }));
-  });
-  const [gamesPlayed, setGamesPlayed] =
-    useState<Record<number, number>>(initialGamesPlayed);
+export function GamesContainer({ tournament, onUpdate }: GamesContainerProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const pairingTracker = useRef(new Set<string>());
-  const nextPlayerId = useRef(Math.max(...players.map((p) => p.id)) + 1);
+  const nextPlayerId = useRef(
+    Math.max(...tournament.players.map((p) => p.id), 0) + 1
+  );
 
-  // Initialize pairingTracker and calculate games played
+  // Calculate games played for each player
+  const gamesPlayed = tournament.players.reduce((acc, player) => {
+    acc[player.id] = tournament.games.reduce((count, game) => {
+      const isPlaying = game.teams.some((team) =>
+        team.players.some((p) => p.id === player.id)
+      );
+      return count + (isPlaying ? 1 : 0);
+    }, 0);
+    return acc;
+  }, {} as Record<number, number>);
+
+  // Initialize pairingTracker
   useEffect(() => {
-    // Reset pairing tracker
     pairingTracker.current.clear();
-
-    // Initialize pairingTracker with existing games
-    games.forEach((game) => {
+    tournament.games.forEach((game) => {
       game.teams.forEach((team) => {
         const teamKey = team.players
           .map((p) => p.id)
@@ -64,20 +43,7 @@ export function GamesContainer() {
         pairingTracker.current.add(teamKey);
       });
     });
-
-    // Calculate games played for each player
-    const newGamesPlayed = players.reduce((acc, player) => {
-      acc[player.id] = games.reduce((count, game) => {
-        const isPlaying = game.teams.some((team) =>
-          team.players.some((p) => p.id === player.id)
-        );
-        return count + (isPlaying ? 1 : 0);
-      }, 0);
-      return acc;
-    }, {} as Record<number, number>);
-
-    setGamesPlayed(newGamesPlayed);
-  }, [games, players]);
+  }, [tournament.games]);
 
   const handleAddPlayer = (name: string) => {
     const newPlayer: Player = {
@@ -86,37 +52,45 @@ export function GamesContainer() {
       isEnabled: true,
     };
     nextPlayerId.current += 1;
-    setPlayers([...players, newPlayer]);
-    setGamesPlayed((prev) => ({ ...prev, [newPlayer.id]: 0 }));
+    onUpdate({
+      ...tournament,
+      players: [...tournament.players, newPlayer],
+    });
   };
 
   const handleDeletePlayer = (playerId: number) => {
     if (gamesPlayed[playerId] > 0) return;
-    setPlayers((currentPlayers) =>
-      currentPlayers.filter((p) => p.id !== playerId)
-    );
+    onUpdate({
+      ...tournament,
+      players: tournament.players.filter((p) => p.id !== playerId),
+    });
   };
 
   const handleDeleteGame = (index: number) => {
-    setGames((currentGames) => currentGames.filter((_, i) => i !== index));
+    onUpdate({
+      ...tournament,
+      games: tournament.games.filter((_, i) => i !== index),
+    });
   };
 
   const handleRenamePlayer = (playerId: number, newName: string) => {
-    setPlayers((currentPlayers) =>
-      currentPlayers.map((player) =>
+    onUpdate({
+      ...tournament,
+      players: tournament.players.map((player) =>
         player.id === playerId ? { ...player, name: newName } : player
-      )
-    );
+      ),
+    });
   };
 
   const togglePlayerEnabled = (playerId: number) => {
-    setPlayers((currentPlayers) =>
-      currentPlayers.map((player) =>
+    onUpdate({
+      ...tournament,
+      players: tournament.players.map((player) =>
         player.id === playerId
           ? { ...player, isEnabled: !player.isEnabled }
           : player
-      )
-    );
+      ),
+    });
   };
 
   const handleScoreChange = (
@@ -124,8 +98,9 @@ export function GamesContainer() {
     teamIndex: number,
     newScore: number
   ) => {
-    setGames((currentGames) =>
-      currentGames.map((game, i) =>
+    onUpdate({
+      ...tournament,
+      games: tournament.games.map((game, i) =>
         i === gameIndex
           ? {
               ...game,
@@ -134,12 +109,12 @@ export function GamesContainer() {
               ),
             }
           : game
-      )
-    );
+      ),
+    });
   };
 
   const addNewGame = () => {
-    const enabledPlayers = players.filter((p) => p.isEnabled);
+    const enabledPlayers = tournament.players.filter((p) => p.isEnabled);
     if (enabledPlayers.length < 4) {
       setErrorMessage(
         "At least 4 enabled players are required to generate a game"
@@ -226,12 +201,15 @@ export function GamesContainer() {
       sittingOut,
     };
 
-    setGames([...games, newGame]);
+    onUpdate({
+      ...tournament,
+      games: [...tournament.games, newGame],
+    });
   };
 
   return (
     <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start w-full max-w-4xl">
-      <Scoreboard players={players} games={games} />
+      <Scoreboard players={tournament.players} games={tournament.games} />
 
       <div className="w-full">
         <div className="flex justify-between items-center mb-8">
@@ -246,7 +224,7 @@ export function GamesContainer() {
         </div>
 
         <PlayerStats
-          players={players}
+          players={tournament.players}
           gamesPlayed={gamesPlayed}
           onToggleEnabled={togglePlayerEnabled}
           onRenamePlayer={handleRenamePlayer}
@@ -256,7 +234,7 @@ export function GamesContainer() {
       </div>
 
       <GamesList
-        games={games}
+        games={tournament.games}
         onDeleteGame={handleDeleteGame}
         onScoreChange={handleScoreChange}
       />
