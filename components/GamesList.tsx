@@ -1,11 +1,12 @@
 "use client";
 import { useState } from "react";
-import { Game } from "@/types/game";
+import { Game, Player } from "@/types/game";
 import { GameCard } from "./GameCard";
 import { ConfirmModal } from "./ConfirmModal";
 
 type GamesListProps = {
   games: Game[];
+  players: Player[];
   onDeleteGame: (index: number) => void;
   onScoreChange: (
     gameIndex: number,
@@ -16,6 +17,7 @@ type GamesListProps = {
 
 export function GamesList({
   games,
+  players,
   onDeleteGame,
   onScoreChange,
 }: GamesListProps) {
@@ -31,6 +33,7 @@ export function GamesList({
             key={index}
             game={game}
             index={index}
+            players={players}
             onDelete={() => setDeleteConfirmation(index)}
             onScoreChange={(teamIndex, newScore) =>
               onScoreChange(index, teamIndex, newScore)

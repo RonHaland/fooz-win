@@ -1,6 +1,6 @@
 "use client";
 
-import { Game } from "@/types/game";
+import { Game, Player } from "@/types/game";
 import { useState } from "react";
 import { TrashIcon } from "./icons/TrashIcon";
 import { SoccerballIcon } from "./icons/SoccerballIcon";
@@ -10,6 +10,7 @@ type GameCardProps = {
   index: number;
   onDelete: () => void;
   onScoreChange: (teamIndex: number, newScore: number) => void;
+  players: Player[];
 };
 
 export function GameCard({
@@ -17,11 +18,17 @@ export function GameCard({
   index,
   onDelete,
   onScoreChange,
+  players,
 }: GameCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
+  // Helper function to get current player name
+  const getPlayerName = (playerId: number) => {
+    return players.find((p) => p.id === playerId)?.name || "Unknown Player";
+  };
+
   return (
-    <article className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 flex flex-col gap-4 shadow-lg hover:shadow-xl transition-shadow">
+    <article className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 flex flex-col gap-4 shadow-lg hover:shadow-xl transition-shadow border border-white/10">
       <h2 className="text-2xl font-bold text-white border-b border-slate-700 pb-2 flex justify-between items-center">
         <span>Game {index + 1}</span>
         <button
@@ -70,7 +77,7 @@ export function GameCard({
               <div className="flex flex-col gap-1">
                 {team.players.map((player) => (
                   <p key={player.id} className="text-slate-200">
-                    {player.name}
+                    {getPlayerName(player.id)}
                   </p>
                 ))}
               </div>
@@ -114,7 +121,7 @@ export function GameCard({
             >
               {game.sittingOut.map((player) => (
                 <p key={player.id} className="text-slate-300">
-                  {player.name}
+                  {getPlayerName(player.id)}
                 </p>
               ))}
             </div>

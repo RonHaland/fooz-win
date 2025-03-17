@@ -239,6 +239,7 @@ export function GamesContainer({ tournament, onUpdate }: GamesContainerProps) {
         <h2 className="text-2xl font-bold text-white">Games</h2>
         <GamesList
           games={tournament.games}
+          players={tournament.players}
           onDeleteGame={handleDeleteGame}
           onScoreChange={handleScoreChange}
         />

@@ -24,3 +24,7 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@theme {
+  --animate-spin-slow: spin 3s linear infinite;
+}
