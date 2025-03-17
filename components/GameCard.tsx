@@ -3,14 +3,21 @@
 import { Game } from "@/types/game";
 import { useState } from "react";
 import { TrashIcon } from "./icons/TrashIcon";
+import { SoccerballIcon } from "./icons/SoccerballIcon";
 
 type GameCardProps = {
   game: Game;
   index: number;
   onDelete: () => void;
+  onScoreChange: (teamIndex: number, newScore: number) => void;
 };
 
-export function GameCard({ game, index, onDelete }: GameCardProps) {
+export function GameCard({
+  game,
+  index,
+  onDelete,
+  onScoreChange,
+}: GameCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -29,9 +36,35 @@ export function GameCard({ game, index, onDelete }: GameCardProps) {
         <div className="flex flex-col gap-4">
           {game.teams.map((team, i) => (
             <div key={i} className="bg-slate-700/30 rounded-lg p-4">
-              <h3 className="text-lg font-semibold text-emerald-400 mb-2">
-                Team {i + 1}
-              </h3>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold text-emerald-400">
+                  Team {i + 1}
+                </h3>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() =>
+                      onScoreChange(i, Math.max(0, team.score - 1))
+                    }
+                    className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-600/50 text-slate-300 hover:bg-slate-600 transition-colors"
+                    aria-label="Decrease score"
+                  >
+                    -
+                  </button>
+                  <div className="flex items-center gap-1">
+                    <SoccerballIcon className="h-4 w-4 text-amber-400" />
+                    <span className="text-white font-bold w-4 text-center">
+                      {team.score}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => onScoreChange(i, team.score + 1)}
+                    className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-600/50 text-slate-300 hover:bg-slate-600 transition-colors"
+                    aria-label="Increase score"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
               <div className="flex flex-col gap-1">
                 {team.players.map((player) => (
                   <p key={player.id} className="text-slate-200">

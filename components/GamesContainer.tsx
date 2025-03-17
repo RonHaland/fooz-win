@@ -7,6 +7,7 @@ import { PlayerStats } from "./PlayerStats";
 import { GamesList } from "./GamesList";
 import { PlusIcon } from "./icons/PlusIcon";
 import { ErrorModal } from "./ErrorModal";
+import { Scoreboard } from "./Scoreboard";
 
 const INITIAL_PLAYERS: Player[] = [
   { name: "Alice", id: 1, isEnabled: true },
@@ -29,12 +30,19 @@ const initialGamesPlayed = INITIAL_PLAYERS.reduce((acc, player) => {
 
 export function GamesContainer() {
   const [players, setPlayers] = useState<Player[]>(INITIAL_PLAYERS);
-  const [games, setGames] = useState<Game[]>(() =>
-    generateBalancedTeams(
+  const [games, setGames] = useState<Game[]>(() => {
+    const generatedGames = generateBalancedTeams(
       players.filter((p) => p.isEnabled),
       0
-    )
-  );
+    );
+    return generatedGames.map((game) => ({
+      ...game,
+      teams: game.teams.map((team) => ({
+        ...team,
+        score: 0,
+      })),
+    }));
+  });
   const [gamesPlayed, setGamesPlayed] =
     useState<Record<number, number>>(initialGamesPlayed);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -107,6 +115,25 @@ export function GamesContainer() {
         player.id === playerId
           ? { ...player, isEnabled: !player.isEnabled }
           : player
+      )
+    );
+  };
+
+  const handleScoreChange = (
+    gameIndex: number,
+    teamIndex: number,
+    newScore: number
+  ) => {
+    setGames((currentGames) =>
+      currentGames.map((game, i) =>
+        i === gameIndex
+          ? {
+              ...game,
+              teams: game.teams.map((team, j) =>
+                j === teamIndex ? { ...team, score: newScore } : team
+              ),
+            }
+          : game
       )
     );
   };
@@ -192,7 +219,10 @@ export function GamesContainer() {
     }
 
     const newGame: Game = {
-      teams: [{ players: team1 }, { players: team2 }],
+      teams: [
+        { players: team1, score: 0 },
+        { players: team2, score: 0 },
+      ],
       sittingOut,
     };
 
@@ -201,6 +231,8 @@ export function GamesContainer() {
 
   return (
     <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start w-full max-w-4xl">
+      <Scoreboard players={players} games={games} />
+
       <div className="w-full">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-bold">Teams</h1>
@@ -223,7 +255,11 @@ export function GamesContainer() {
         />
       </div>
 
-      <GamesList games={games} onDeleteGame={handleDeleteGame} />
+      <GamesList
+        games={games}
+        onDeleteGame={handleDeleteGame}
+        onScoreChange={handleScoreChange}
+      />
 
       <ErrorModal
         isOpen={errorMessage !== null}

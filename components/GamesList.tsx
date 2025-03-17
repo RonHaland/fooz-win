@@ -7,9 +7,18 @@ import { ConfirmModal } from "./ConfirmModal";
 type GamesListProps = {
   games: Game[];
   onDeleteGame: (index: number) => void;
+  onScoreChange: (
+    gameIndex: number,
+    teamIndex: number,
+    newScore: number
+  ) => void;
 };
 
-export function GamesList({ games, onDeleteGame }: GamesListProps) {
+export function GamesList({
+  games,
+  onDeleteGame,
+  onScoreChange,
+}: GamesListProps) {
   const [deleteConfirmation, setDeleteConfirmation] = useState<number | null>(
     null
   );
@@ -23,6 +32,9 @@ export function GamesList({ games, onDeleteGame }: GamesListProps) {
             game={game}
             index={index}
             onDelete={() => setDeleteConfirmation(index)}
+            onScoreChange={(teamIndex, newScore) =>
+              onScoreChange(index, teamIndex, newScore)
+            }
           />
         ))}
       </section>
@@ -32,6 +44,7 @@ export function GamesList({ games, onDeleteGame }: GamesListProps) {
         onConfirm={() => {
           if (deleteConfirmation !== null) {
             onDeleteGame(deleteConfirmation);
+            setDeleteConfirmation(null);
           }
         }}
         title="Delete Game"
