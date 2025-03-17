@@ -4,9 +4,9 @@ import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import { Tournament } from "@/types/game";
 import { getTournament, saveTournament } from "@/utils/storage";
-import { GamesContainer } from "@/components/GamesContainer";
 import { ArrowLeftIcon } from "@/components/icons/ArrowLeftIcon";
 import { SoccerballIcon } from "@/components/icons/SoccerballIcon";
+import { TournamentTabs } from "@/components/TournamentTabs";
 import Link from "next/link";
 
 export default function TournamentPage({
@@ -66,7 +66,7 @@ export default function TournamentPage({
           </div>
         </div>
 
-        <GamesContainer
+        <TournamentTabs
           tournament={tournament}
           onUpdate={handleUpdateTournament}
         />

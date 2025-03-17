@@ -74,12 +74,25 @@ export function GameCard({
                   </button>
                 </div>
               </div>
-              <div className="flex flex-col gap-1">
-                {team.players.map((player) => (
+              <div className="grid grid-cols-[1fr_auto_1fr] gap-1">
+                {/* {team.players.map((player) => (
                   <p key={player.id} className="text-slate-200">
                     {getPlayerName(player.id)}
                   </p>
-                ))}
+                ))} */}
+                <p
+                  key={team.players[0].id}
+                  className="text-slate-200 text-center"
+                >
+                  {getPlayerName(team.players[0].id)}
+                </p>
+                <span className="text-slate-200 text-center">&</span>
+                <p
+                  key={team.players[1].id}
+                  className="text-slate-200 text-center"
+                >
+                  {getPlayerName(team.players[1].id)}
+                </p>
               </div>
             </div>
           ))}
