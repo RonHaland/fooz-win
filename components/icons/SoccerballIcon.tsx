@@ -28,11 +28,11 @@ export function SoccerballIcon({ className = "h-5 w-5" }: IconProps) {
         strokeLinejoin="round"
       ></path>
       <line
-        style={{ fill: "rgb(216, 216, 216)", stroke: "rgb(255, 255, 255)" }}
         x1="11.914"
         y1="5.126"
         x2="11.971"
         y2="2.119"
+        strokeWidth="1.5"
       ></line>
     </svg>
   );

@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { Tournament } from "@/types/game";
 import { getTournament, saveTournament } from "@/utils/storage";
 import { GamesContainer } from "@/components/GamesContainer";
+import { ArrowLeftIcon } from "@/components/icons/ArrowLeftIcon";
+import { SoccerballIcon } from "@/components/icons/SoccerballIcon";
 import Link from "next/link";
 
 export default function TournamentPage({
@@ -34,31 +36,41 @@ export default function TournamentPage({
   if (!tournament) return null;
 
   return (
-    <div className="min-h-screen py-8 px-4">
-      <div className="mx-auto flex flex-col items-center">
-        <div className="w-full max-w-4xl mb-8">
+    <main className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800">
+      <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+        <div className="flex items-center gap-4 mb-8">
           <Link
             href="/"
-            className="text-slate-400 hover:text-slate-300 transition-colors mb-2 inline-block"
+            className="bg-slate-800/50 p-2 rounded-xl border border-slate-700/50 hover:bg-slate-700/50 transition-all duration-200 transform hover:scale-105"
+            style={{ viewTransitionName: "back-button" }}
           >
-            ← Back to Tournaments
+            <ArrowLeftIcon className="h-6 w-6 text-slate-400" />
           </Link>
-          <h1
-            className="text-4xl font-bold"
-            style={{ viewTransitionName: "page-title" }}
-          >
-            <span
+          <div className="min-w-0 flex-1">
+            <h1
+              className="text-4xl font-bold"
               style={{ viewTransitionName: `tournament-card-${tournament.id}` }}
             >
-              {tournament.name}
-            </span>
-          </h1>
+              <span className="bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent inline-block">
+                {tournament.name}
+              </span>
+            </h1>
+            <p className="text-slate-400 text-sm flex items-center gap-2">
+              <span className="flex items-center">
+                <SoccerballIcon className="h-4 w-4 mr-1" />
+                {tournament.games.length} games
+              </span>
+              <span className="text-slate-600">•</span>
+              <span>{tournament.players.length} players</span>
+            </p>
+          </div>
         </div>
+
         <GamesContainer
           tournament={tournament}
           onUpdate={handleUpdateTournament}
         />
       </div>
-    </div>
+    </main>
   );
 }

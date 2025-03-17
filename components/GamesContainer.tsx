@@ -208,17 +208,19 @@ export function GamesContainer({ tournament, onUpdate }: GamesContainerProps) {
   };
 
   return (
-    <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start w-full max-w-4xl">
-      <Scoreboard players={tournament.players} games={tournament.games} />
+    <div className="space-y-8">
+      <section className="bg-slate-800/50 rounded-xl border border-slate-700/50 overflow-hidden">
+        <Scoreboard players={tournament.players} games={tournament.games} />
+      </section>
 
-      <div className="w-full">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold">Teams</h1>
+      <section className="bg-slate-800/50 rounded-xl border border-slate-700/50 p-6">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-white">Players</h2>
           <button
             onClick={addNewGame}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors flex items-center gap-2"
+            className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-200 transform hover:scale-105 flex items-center gap-2"
           >
-            <PlusIcon />
+            <PlusIcon className="h-5 w-5" />
             Add Game
           </button>
         </div>
@@ -231,19 +233,22 @@ export function GamesContainer({ tournament, onUpdate }: GamesContainerProps) {
           onAddPlayer={handleAddPlayer}
           onDeletePlayer={handleDeletePlayer}
         />
-      </div>
+      </section>
 
-      <GamesList
-        games={tournament.games}
-        onDeleteGame={handleDeleteGame}
-        onScoreChange={handleScoreChange}
-      />
+      <section className="space-y-6">
+        <h2 className="text-2xl font-bold text-white">Games</h2>
+        <GamesList
+          games={tournament.games}
+          onDeleteGame={handleDeleteGame}
+          onScoreChange={handleScoreChange}
+        />
+      </section>
 
       <ErrorModal
         isOpen={errorMessage !== null}
         onClose={() => setErrorMessage(null)}
         message={errorMessage || ""}
       />
-    </main>
+    </div>
   );
 }

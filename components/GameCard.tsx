@@ -43,7 +43,7 @@ export function GameCard({
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() =>
-                      onScoreChange(i, Math.max(0, team.score - 1))
+                      onScoreChange(i, team.score > 0 ? team.score - 1 : 10)
                     }
                     className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-600/50 text-slate-300 hover:bg-slate-600 transition-colors"
                     aria-label="Decrease score"
@@ -57,7 +57,9 @@ export function GameCard({
                     </span>
                   </div>
                   <button
-                    onClick={() => onScoreChange(i, team.score + 1)}
+                    onClick={() =>
+                      onScoreChange(i, team.score < 10 ? team.score + 1 : 0)
+                    }
                     className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-600/50 text-slate-300 hover:bg-slate-600 transition-colors"
                     aria-label="Increase score"
                   >

@@ -23,47 +23,65 @@ export function Scoreboard({ players, games }: ScoreboardProps) {
   );
 
   return (
-    <div className="w-full bg-slate-800 rounded-xl p-6 shadow-lg">
-      <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-        <SoccerballIcon className="h-6 w-6 text-amber-400" />
-        Scoreboard
-      </h2>
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-slate-700">
-              <th className="text-left py-2 px-4 text-slate-400 font-medium w-16">
-                #
-              </th>
-              <th className="text-left py-2 px-4 text-slate-400 font-medium">
-                Name
-              </th>
-              <th className="text-right py-2 px-4 text-slate-400 font-medium">
-                Score
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {sortedPlayers.map((player, index) => (
-              <tr
-                key={player.id}
-                className={`border-b border-slate-700/50 ${
-                  !player.isEnabled ? "opacity-50" : ""
-                }`}
-              >
-                <td className="py-3 px-4 text-slate-300">{index + 1}</td>
-                <td className="py-3 px-4 text-slate-200 font-medium">
-                  {player.name}
-                </td>
-                <td className="py-3 px-4 text-right">
-                  <span className="text-amber-400 font-bold">
-                    {playerScores[player.id] || 0}
-                  </span>
-                </td>
+    <div className="w-full">
+      <div className="bg-gradient-to-r from-emerald-600/20 to-blue-600/20 p-6">
+        <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+          <SoccerballIcon className="h-6 w-6 text-amber-400" />
+          Scoreboard
+        </h2>
+      </div>
+      <div className="p-6">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-slate-700">
+                <th className="text-left py-2 px-4 text-slate-400 font-medium w-16">
+                  #
+                </th>
+                <th className="text-left py-2 px-4 text-slate-400 font-medium">
+                  Name
+                </th>
+                <th className="text-right py-2 px-4 text-slate-400 font-medium">
+                  Score
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {sortedPlayers.map((player, index) => (
+                <tr
+                  key={player.id}
+                  className={`border-b border-slate-700/50 ${
+                    !player.isEnabled ? "opacity-50" : ""
+                  } ${index === 0 ? "bg-amber-400/10" : ""}`}
+                >
+                  <td className="py-3 px-4">
+                    {index === 0 ? (
+                      <span className="text-amber-400 font-bold">1st</span>
+                    ) : index === 1 ? (
+                      <span className="text-slate-300 font-bold">2nd</span>
+                    ) : index === 2 ? (
+                      <span className="text-orange-700 font-bold">3rd</span>
+                    ) : (
+                      <span className="text-slate-500">{index + 1}th</span>
+                    )}
+                  </td>
+                  <td className="py-3 px-4 text-slate-200 font-medium">
+                    {player.name}
+                  </td>
+                  <td className="py-3 px-4 text-right">
+                    <span
+                      className={`font-bold ${
+                        index === 0 ? "text-amber-400" : "text-emerald-400"
+                      }`}
+                    >
+                      {playerScores[player.id] || 0}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
