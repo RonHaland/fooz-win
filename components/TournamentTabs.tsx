@@ -189,8 +189,8 @@ export function TournamentTabs({ tournament, onUpdate }: TournamentTabsProps) {
             </section>
           </>
         ) : (
-          <section className="bg-slate-800/50 rounded-xl border border-slate-700/50 p-6">
-            <h2 className="text-2xl font-bold text-white mb-6">
+          <section className="bg-slate-800/50 rounded-xl border border-slate-700/50 pt-6">
+            <h2 className="text-2xl font-bold text-white mb-6 px-6">
               Player Management
             </h2>
             <PlayerStats

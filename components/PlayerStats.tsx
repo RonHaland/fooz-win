@@ -61,7 +61,7 @@ export function PlayerStats({
   };
 
   return (
-    <div className="bg-slate-800 rounded-xl p-6 mb-8">
+    <div className="bg-slate-800 p-6 mb-8">
       <div className="flex justify-between items-center border-b border-slate-700 pb-2 mb-4">
         <h2 className="text-2xl font-bold text-white">Games Played</h2>
         <button

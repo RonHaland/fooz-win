@@ -1,6 +1,6 @@
 import { Tournament } from "@/types/game";
 
-const STORAGE_PREFIX = "fooz2_tournament_";
+const STORAGE_PREFIX = "foozwin_tournament_";
 
 export function getTournamentKey(id: string) {
   return `${STORAGE_PREFIX}${id}`;

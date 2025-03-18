@@ -27,9 +27,9 @@ export default function Home() {
     setTournaments(getAllTournaments());
   }, []);
 
-  const handleCreateTournament = () => {
-    if (!newTournamentName.trim()) return;
-    const tournament = createTournament(newTournamentName.trim());
+  const handleCreateTournament = (name:string) => {
+    if (!name.trim()) return;
+    const tournament = createTournament(name.trim());
     setTournaments([tournament, ...tournaments]);
     setNewTournamentName("");
     setShowNewTournamentModal(false);

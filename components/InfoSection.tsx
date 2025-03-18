@@ -29,7 +29,7 @@ export function InfoSection() {
               <span className="font-medium text-emerald-400">
                 Update Scores:
               </span>{" "}
-              Click on any score in a game card to update it.
+              Click on <span className="rounded px-1 bg-white/10 border border-white/20">+</span> or <span className="rounded px-1 bg-white/10 border border-white/20">-</span> on a game card to update the score for a game.
             </p>
             <p>
               <span className="font-medium text-emerald-400">
