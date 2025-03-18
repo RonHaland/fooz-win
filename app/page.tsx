@@ -53,7 +53,7 @@ export default function Home() {
             className="text-4xl sm:text-5xl font-bold"
             style={{ viewTransitionName: "page-title" }}
           >
-            <span className="bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent inline-block">
+            <span className="bg-gradient-to-r from-emerald-500 to-blue-500 bg-clip-text text-transparent inline-block">
               Foozball.win
             </span>
           </h1>
