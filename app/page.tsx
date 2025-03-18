@@ -62,7 +62,7 @@ export default function Home() {
           </p>
           <button
             onClick={() => setShowNewTournamentModal(true)}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-200 transform hover:scale-105 flex items-center gap-2"
+            className="bg-emerald-600 hover:bg-emerald-700 hover:cursor-pointer text-white font-semibold px-6 py-3 rounded-xl transition-all duration-200 transform hover:scale-105 flex items-center gap-2"
           >
             <PlusIcon className="h-5 w-5" />
             New Tournament
@@ -134,13 +134,11 @@ export default function Home() {
       </div>
 
       {/* New Tournament Modal */}
-      {showNewTournamentModal && (
-        <NewTournamentModal
-          isOpen={showNewTournamentModal}
-          onClose={() => setShowNewTournamentModal(false)}
-          onCreateTournament={handleCreateTournament}
-        />
-      )}
+      <NewTournamentModal
+        isOpen={showNewTournamentModal}
+        onClose={() => setShowNewTournamentModal(false)}
+        onCreateTournament={handleCreateTournament}
+      />
 
       <ConfirmModal
         isOpen={deleteConfirmation !== null}

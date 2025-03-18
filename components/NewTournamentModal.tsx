@@ -41,13 +41,13 @@ export function NewTournamentModal({
         <div className="flex justify-end gap-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-lg bg-slate-700/50 text-slate-300 hover:bg-slate-600/50 transition-colors"
+            className="px-4 py-2 rounded-lg bg-slate-700/50 text-slate-300 hover:bg-slate-600/50 transition-colors hover:cursor-pointer"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
-            className="px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors"
+            className="px-4 py-2 rounded-lg bg-emerald-700 text-white hover:bg-emerald-600 transition-colors hover:cursor-pointer"
           >
             Create
           </button>

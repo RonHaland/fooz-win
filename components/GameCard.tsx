@@ -28,8 +28,8 @@ export function GameCard({
   };
 
   return (
-    <article className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 flex flex-col gap-4 shadow-lg hover:shadow-xl transition-shadow border border-white/10">
-      <h2 className="text-2xl font-bold text-white border-b border-slate-700 pb-2 flex justify-between items-center">
+    <article className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-4 flex flex-col gap-3 shadow-lg hover:shadow-xl transition-shadow border border-white/10">
+      <h2 className="text-2xl font-bold text-white border-b border-slate-700 pb-1 px-2 flex justify-between items-center">
         <span>Game {index + 1}</span>
         <button
           onClick={onDelete}
@@ -39,11 +39,11 @@ export function GameCard({
           <TrashIcon />
         </button>
       </h2>
-      <div className="flex flex-col gap-6">
-        <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
           {game.teams.map((team, i) => (
-            <div key={i} className="bg-slate-700/30 rounded-lg p-4">
-              <div className="flex justify-between items-center mb-4">
+            <div key={i} className="bg-slate-700/30 rounded-lg p-3">
+              <div className="grid grid-cols-[1fr_auto] items-center mb-4 text-center">
                 <h3 className="text-lg font-semibold text-emerald-400">
                   Team {i + 1}
                 </h3>
@@ -74,22 +74,17 @@ export function GameCard({
                   </button>
                 </div>
               </div>
-              <div className="grid grid-cols-[1fr_auto_1fr] gap-1">
-                {/* {team.players.map((player) => (
-                  <p key={player.id} className="text-slate-200">
-                    {getPlayerName(player.id)}
-                  </p>
-                ))} */}
+              <div className="grid grid-cols-[1fr_15px_1fr] gap-1">
                 <p
                   key={team.players[0].id}
-                  className="text-slate-200 text-center"
+                  className="text-slate-200 text-center whitespace-nowrap text-ellipsis"
                 >
                   {getPlayerName(team.players[0].id)}
                 </p>
                 <span className="text-slate-200 text-center">&</span>
                 <p
                   key={team.players[1].id}
-                  className="text-slate-200 text-center"
+                  className="text-slate-200 text-center whitespace-nowrap text-ellipsis"
                 >
                   {getPlayerName(team.players[1].id)}
                 </p>
@@ -106,7 +101,10 @@ export function GameCard({
               aria-controls={`sitting-out-${index}`}
             >
               <h3 className="text-lg font-semibold text-amber-400">
-                Sitting Out ({game.sittingOut.length})
+                Sitting Out{" "}
+                <span className="bg-amber-300/30 border border-amber-100/40 w-6 h-6 inline-flex justify-center items-center rounded-full">
+                  {game.sittingOut.length}
+                </span>
               </h3>
               <svg
                 className={`w-5 h-5 text-amber-400 transition-transform ${
@@ -128,7 +126,7 @@ export function GameCard({
               id={`sitting-out-${index}`}
               role="region"
               aria-labelledby={`sitting-out-button-${index}`}
-              className={`flex flex-col gap-1 overflow-hidden transition-all duration-500 ${
+              className={`flex flex-col gap-1 overflow-hidden transition-all duration-150 ease-in-out ${
                 isExpanded ? "mt-2 max-h-96" : "max-h-0"
               }`}
             >

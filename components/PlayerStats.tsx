@@ -61,17 +61,28 @@ export function PlayerStats({
   };
 
   return (
-    <div className="bg-slate-800 p-6 mb-8">
+    <div className="bg-slate-800 p-6 rounded-b-xl">
       <div className="flex justify-between items-center border-b border-slate-700 pb-2 mb-4">
-        <h2 className="text-2xl font-bold text-white">Games Played</h2>
+        <h2 className="text-2xl font-bold text-white">Players</h2>
         <button
           onClick={() => setIsAddModalOpen(true)}
-          className="bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 px-3 py-1 rounded-lg transition-colors flex items-center gap-1"
+          className="bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 px-3 py-1 rounded-lg transition-colors flex items-center gap-1 hover:cursor-pointer"
         >
           <PlusIcon className="h-4 w-4" />
           Add Player
         </button>
       </div>
+      {!players.length && (
+        <div className="border-2 border-white/40 bg-slate-400/20 rounded-xl w-full border-dashed flex justify-center py-10 flex-col items-center gap-4">
+          No players added to the tournament
+          <button
+            className="hover:cursor-pointer text-emerald-400 hover:text-emerald-300"
+            onClick={() => setIsAddModalOpen(true)}
+          >
+            Add the first player
+          </button>
+        </div>
+      )}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {players.map((player) => (
           <div

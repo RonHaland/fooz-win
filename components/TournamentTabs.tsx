@@ -143,7 +143,7 @@ export function TournamentTabs({ tournament, onUpdate }: TournamentTabsProps) {
       <div className="flex gap-2 border-b border-slate-700/50">
         <button
           onClick={() => setActiveTab("overview")}
-          className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors border-b-2 ${
+          className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors border-b-2 hover:cursor-pointer ${
             activeTab === "overview"
               ? "bg-slate-800/50 text-emerald-400 border-emerald-400"
               : "text-slate-400 hover:text-slate-300 hover:border-emerald-400/20 border-transparent"
@@ -153,7 +153,7 @@ export function TournamentTabs({ tournament, onUpdate }: TournamentTabsProps) {
         </button>
         <button
           onClick={() => setActiveTab("admin")}
-          className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors border-b-2  ${
+          className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors border-b-2 hover:cursor-pointer ${
             activeTab === "admin"
               ? "bg-slate-800/50 text-emerald-400 border-emerald-400"
               : "text-slate-400 hover:text-slate-300 hover:border-emerald-400/20 border-transparent"
@@ -171,6 +171,7 @@ export function TournamentTabs({ tournament, onUpdate }: TournamentTabsProps) {
               <Scoreboard
                 players={tournament.players}
                 games={tournament.games}
+                onClickAdminTab={() => setActiveTab("admin")}
               />
             </section>
 
@@ -179,7 +180,9 @@ export function TournamentTabs({ tournament, onUpdate }: TournamentTabsProps) {
                 <h2 className="text-2xl font-bold text-white">Games</h2>
                 <button
                   onClick={addNewGame}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-200 transform hover:scale-105 flex items-center gap-2"
+                  className="bg-emerald-700 hover:bg-emerald-600 text-white font-semibold px-6 py-3 
+                            rounded-xl transition-all duration-200 transform hover:scale-105 flex items-center 
+                            gap-2 hover:shadow-lg shadow-emerald-800/40 hover:cursor-pointer"
                 >
                   <PlusIcon className="h-5 w-5" />
                   Add Game
@@ -189,10 +192,12 @@ export function TournamentTabs({ tournament, onUpdate }: TournamentTabsProps) {
             </section>
           </>
         ) : (
-          <section className="bg-slate-800/50 rounded-xl border border-slate-700/50 pt-6">
-            <h2 className="text-2xl font-bold text-white mb-6 px-6">
-              Player Management
-            </h2>
+          <section className="bg-slate-800/50 rounded-xl border border-slate-700/50">
+            <div className="p-6 w-full bg-gradient-to-r from-emerald-600/20 to-blue-500/20 rounded-t-xl">
+              <h2 className="text-2xl font-bold text-white">
+                Player Management
+              </h2>
+            </div>
             <PlayerStats
               players={tournament.players}
               gamesPlayed={gamesPlayed}

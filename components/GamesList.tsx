@@ -28,15 +28,15 @@ export function GamesList({
   return (
     <>
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
-        {games.map((game, index) => (
+        {games.toReversed().map((game, index) => (
           <GameCard
             key={index}
             game={game}
-            index={index}
+            index={games.length - 1 - index}
             players={players}
-            onDelete={() => setDeleteConfirmation(index)}
+            onDelete={() => setDeleteConfirmation(games.length - 1 - index)}
             onScoreChange={(teamIndex, newScore) =>
-              onScoreChange(index, teamIndex, newScore)
+              onScoreChange(games.length - 1 - index, teamIndex, newScore)
             }
           />
         ))}
