@@ -18,7 +18,6 @@ import { NewTournamentModal } from "@/components/NewTournamentModal";
 export default function Home() {
   const [tournaments, setTournaments] = useState<Tournament[]>([]);
   const [showNewTournamentModal, setShowNewTournamentModal] = useState(false);
-  const [newTournamentName, setNewTournamentName] = useState("");
   const [deleteConfirmation, setDeleteConfirmation] = useState<string | null>(
     null
   );
@@ -31,7 +30,6 @@ export default function Home() {
     if (!name.trim()) return;
     const tournament = createTournament(name.trim());
     setTournaments([tournament, ...tournaments]);
-    setNewTournamentName("");
     setShowNewTournamentModal(false);
   };
 

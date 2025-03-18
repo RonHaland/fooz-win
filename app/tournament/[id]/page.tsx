@@ -41,7 +41,7 @@ export default function TournamentPage({
         <div className="flex items-center gap-4 mb-8">
           <Link
             href="/"
-            className="bg-slate-800/50 p-2 rounded-xl border border-slate-700/50 hover:bg-slate-700/50 transition-all duration-200 transform hover:scale-105"
+            className="bg-slate-800/50 p-2 rounded-xl border border-slate-700/50 hover:bg-slate-700/50 transition-all duration-200 transform hover:scale-110"
             style={{ viewTransitionName: "back-button" }}
           >
             <ArrowLeftIcon className="h-6 w-6 text-slate-400" />
