@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Tournament } from "@/types/game";
 import { getTournament, saveTournament } from "@/utils/storage";
 import { ArrowLeftIcon } from "@/components/icons/ArrowLeftIcon";
-import { SoccerballIcon } from "@/components/icons/SoccerballIcon";
+import { FootballIcon } from "@/components/icons/FootballIcon";
 import { TournamentTabs } from "@/components/TournamentTabs";
 import Link from "next/link";
 
@@ -57,7 +57,7 @@ export default function TournamentPage({
             </h1>
             <p className="text-slate-400 text-sm flex items-center gap-2">
               <span className="flex items-center">
-                <SoccerballIcon className="h-4 w-4 mr-1" />
+                <FootballIcon className="h-4 w-4 mr-1" />
                 {tournament.games.length} games
               </span>
               <span className="text-slate-600">•</span>

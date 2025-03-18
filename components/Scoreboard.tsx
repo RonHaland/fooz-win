@@ -1,5 +1,5 @@
 import { Game, Player } from "@/types/game";
-import { SoccerballIcon } from "./icons/SoccerballIcon";
+import { FootballIcon } from "./icons/FootballIcon";
 
 type ScoreboardProps = {
   players: Player[];
@@ -26,7 +26,7 @@ export function Scoreboard({ players, games }: ScoreboardProps) {
     <div className="w-full">
       <div className="bg-gradient-to-r from-emerald-600/20 to-blue-600/20 p-6">
         <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-          <SoccerballIcon className="h-6 w-6 text-amber-400" />
+          <FootballIcon className="h-6 w-6 text-amber-400" />
           Scoreboard
         </h2>
       </div>

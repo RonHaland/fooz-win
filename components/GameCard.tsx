@@ -3,7 +3,7 @@
 import { Game, Player } from "@/types/game";
 import { useState } from "react";
 import { TrashIcon } from "./icons/TrashIcon";
-import { SoccerballIcon } from "./icons/SoccerballIcon";
+import { FootballIcon } from "./icons/FootballIcon";
 
 type GameCardProps = {
   game: Game;
@@ -58,7 +58,7 @@ export function GameCard({
                     -
                   </button>
                   <div className="flex items-center gap-1">
-                    <SoccerballIcon className="h-4 w-4 text-amber-400" />
+                    <FootballIcon className="h-4 w-4 text-amber-400" />
                     <span className="text-white font-bold w-4 text-center">
                       {team.score}
                     </span>

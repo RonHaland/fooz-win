@@ -9,11 +9,11 @@ import {
 } from "@/utils/storage";
 import { PlusIcon } from "@/components/icons/PlusIcon";
 import { TrashIcon } from "@/components/icons/TrashIcon";
-import { SoccerballIcon } from "@/components/icons/SoccerballIcon";
 import Link from "next/link";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import { InfoSection } from "@/components/InfoSection";
 import { NewTournamentModal } from "@/components/NewTournamentModal";
+import { FootballIcon } from "@/components/icons/FootballIcon";
 
 export default function Home() {
   const [tournaments, setTournaments] = useState<Tournament[]>([]);
@@ -26,7 +26,7 @@ export default function Home() {
     setTournaments(getAllTournaments());
   }, []);
 
-  const handleCreateTournament = (name:string) => {
+  const handleCreateTournament = (name: string) => {
     if (!name.trim()) return;
     const tournament = createTournament(name.trim());
     setTournaments([tournament, ...tournaments]);
@@ -46,7 +46,7 @@ export default function Home() {
         <div className="text-center mb-12 flex flex-col items-center">
           <div className="flex justify-center mb-4">
             <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
-              <SoccerballIcon className="h-12 w-12 text-emerald-400 animate-spin-slow" />
+              <FootballIcon className="h-12 w-12 text-emerald-400 animate-spin-slow" />
             </div>
           </div>
           <h1
@@ -100,7 +100,7 @@ export default function Home() {
                       </h2>
                       <p className="text-slate-400 text-sm flex items-center gap-2">
                         <span className="flex items-center">
-                          <SoccerballIcon className="h-4 w-4 mr-1" />
+                          <FootballIcon className="h-4 w-4 mr-1" />
                           {tournament.games.length} games
                         </span>
                         <span className="text-slate-600">•</span>
