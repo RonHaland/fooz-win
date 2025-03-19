@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { PlayIcon, PauseIcon, StopIcon, PencilIcon } from "./icons";
+import { PlayIcon, PauseIcon, StopIcon } from "./icons";
 import { Tournament } from "@/types/game";
 
 interface CountdownTimerProps {
@@ -102,7 +102,7 @@ export function CountdownTimer({ tournament }: CountdownTimerProps) {
         </h2>
         {isTimeout ? (
           <div className="text-4xl font-bold bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">
-            Time's Up!
+            Time&apos;s Up!
           </div>
         ) : (
           <div

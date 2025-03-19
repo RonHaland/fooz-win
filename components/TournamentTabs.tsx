@@ -17,7 +17,7 @@ type TournamentTabsProps = {
 export function TournamentTabs({ tournament, onUpdate }: TournamentTabsProps) {
   const [activeTab, setActiveTab] = useState<"overview" | "admin">("overview");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isOvertime, setIsOvertime] = useState(false);
+  const [isOvertime] = useState(false);
   const [editingField, setEditingField] = useState<{
     type: "timer" | "overtimer";
     part: "minutes" | "seconds";
@@ -143,13 +143,6 @@ export function TournamentTabs({ tournament, onUpdate }: TournamentTabsProps) {
       games: [...tournament.games, newGame],
     });
   };
-
-  function handleTimerComplete() {
-    setIsOvertime(true);
-  }
-  function handleOvertimeComplete() {
-    setIsOvertime(false);
-  }
 
   const handleEditStart = (
     type: "timer" | "overtimer",
