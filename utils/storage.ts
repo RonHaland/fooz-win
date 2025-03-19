@@ -40,6 +40,12 @@ export function createTournament(name: string): Tournament {
     games: [],
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
+    config: {
+      enableTimer: true,
+      timerDuration: 360,
+      enableOvertimer: true,
+      overtimerDuration: 120,
+    },
   };
   saveTournament(tournament);
   return tournament;

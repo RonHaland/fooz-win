@@ -73,7 +73,7 @@ export function PlayerStats({
         </button>
       </div>
       {!players.length && (
-        <div className="border-2 border-white/40 bg-slate-400/20 rounded-xl w-full border-dashed flex justify-center py-10 flex-col items-center gap-4">
+        <div className="border-2 border-white/40 bg-slate-400/10 rounded-xl w-full border-dashed flex justify-center py-10 flex-col items-center gap-4">
           No players added to the tournament
           <button
             className="hover:cursor-pointer text-emerald-400 hover:text-emerald-300"
@@ -98,7 +98,7 @@ export function PlayerStats({
                 onChange={(e) => setEditingName(e.target.value)}
                 onBlur={handleSaveEdit}
                 onKeyDown={handleKeyDown}
-                className="bg-slate-600/50 text-white px-2 py-1 rounded text-center w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="bg-slate-600/50 text-white px-2 py-1 rounded text-center w-full focus:outline-none focus:ring-2 focus:ring-emerald-500 -my-1"
                 autoFocus
               />
             ) : (

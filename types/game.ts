@@ -21,4 +21,12 @@ export type Tournament = {
   games: Game[];
   createdAt: string;
   updatedAt: string;
+  config?: TournamentConfig;
 };
+
+export type TournamentConfig = {
+  enableTimer: boolean;
+  timerDuration: number;
+  enableOvertimer: boolean;
+  overtimerDuration: number;
+}
