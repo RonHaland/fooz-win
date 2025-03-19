@@ -3,7 +3,7 @@
 import { useEffect, useState, use } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { Tournament } from "@/types/game";
-import { getTournament, saveTournament } from "@/utils/storage";
+import { getTournament } from "@/utils/storage";
 import { ArrowLeftIcon } from "@/components/icons/ArrowLeftIcon";
 import { FootballIcon } from "@/components/icons/FootballIcon";
 import Link from "next/link";
@@ -28,12 +28,6 @@ export default function TournamentLayout({
     }
     setTournament(loadedTournament);
   }, [id, router]);
-
-  const handleUpdateTournament = (updatedTournament: Tournament) => {
-    updatedTournament.updatedAt = new Date().toISOString();
-    saveTournament(updatedTournament);
-    setTournament(updatedTournament);
-  };
 
   if (!tournament) return null;
 

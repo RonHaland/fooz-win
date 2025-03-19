@@ -93,8 +93,8 @@ export default function TournamentOverviewPage({
 
     // Try to avoid duplicate teams if possible, but don't prioritize it
     const shuffled = [...selectedPlayers].sort(() => Math.random() - 0.5);
-    let team1 = shuffled.slice(0, 2);
-    let team2 = shuffled.slice(2, 4);
+    const team1 = shuffled.slice(0, 2);
+    const team2 = shuffled.slice(2, 4);
 
     const newGame = {
       teams: [
