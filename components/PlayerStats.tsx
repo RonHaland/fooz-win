@@ -110,7 +110,7 @@ export function PlayerStats({
               </p>
             )}
             <p className="text-3xl font-bold text-emerald-400">
-              {gamesPlayed[player.id]}
+              {gamesPlayed[player.id] ?? 0}
             </p>
             <p className="text-slate-400 text-sm mb-2">games</p>
             <div className="flex gap-2">
@@ -124,7 +124,7 @@ export function PlayerStats({
               >
                 {player.isEnabled ? "Disable" : "Enable"}
               </button>
-              {gamesPlayed[player.id] === 0 && (
+              {(!gamesPlayed[player.id] || gamesPlayed[player.id] === 0) && (
                 <button
                   onClick={() =>
                     setDeleteConfirmation({
