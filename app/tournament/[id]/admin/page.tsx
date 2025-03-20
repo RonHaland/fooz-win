@@ -16,8 +16,8 @@ export default function TournamentAdminPage({
   const [tournament, setTournament] = useState<Tournament | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [editingField, setEditingField] = useState<{
-    type: "timer" | "overtimer";
-    part: "minutes" | "seconds";
+    type: "timer" | "overtimer" | "name";
+    part?: "minutes" | "seconds";
     value: string;
   } | null>(null);
   const { id } = use(params);
@@ -177,6 +177,51 @@ export default function TournamentAdminPage({
           <h2 className="text-2xl font-bold text-white">Tournament Settings</h2>
         </div>
         <div className="p-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <label className="text-white font-medium">Tournament Name</label>
+            <div className="flex items-center gap-2">
+              {editingField?.type === "name" ? (
+                <input
+                  type="text"
+                  value={editingField.value}
+                  onChange={(e) =>
+                    setEditingField((prev) =>
+                      prev ? { ...prev, value: e.target.value } : null
+                    )
+                  }
+                  onBlur={() => {
+                    if (editingField?.value.trim()) {
+                      handleUpdateTournament({
+                        ...tournament,
+                        name: editingField.value.trim(),
+                      });
+                    }
+                    setEditingField(null);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && editingField?.value.trim()) {
+                      handleUpdateTournament({
+                        ...tournament,
+                        name: editingField.value.trim(),
+                      });
+                      setEditingField(null);
+                    }
+                  }}
+                  className="bg-slate-700 text-white rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  autoFocus
+                />
+              ) : (
+                <div
+                  className="flex items-center gap-1 cursor-pointer hover:bg-slate-700/50 px-3 py-1 rounded transition-colors"
+                  onClick={() =>
+                    setEditingField({ type: "name", value: tournament.name })
+                  }
+                >
+                  <span className="text-white">{tournament.name}</span>
+                </div>
+              )}
+            </div>
+          </div>
           <div className="flex items-center justify-between">
             <label className="text-white font-medium">Enable Timer</label>
             <div className="flex items-center gap-2">
