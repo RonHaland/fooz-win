@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
-import { use } from "react";
+import { use, useEffect } from "react";
 
 export default function TournamentPage({
   params,
@@ -15,7 +15,11 @@ export default function TournamentPage({
   const isOverview = pathname.endsWith("/overview");
   const isAdmin = pathname.endsWith("/admin");
 
-  if (!isOverview && !isAdmin) {
-    router.replace(`/tournament/${id}/overview`);
-  }
+  useEffect(() => {
+    if (!isOverview && !isAdmin) {
+      router.replace(`/tournament/${id}/overview`);
+    }
+  }, [isOverview, isAdmin, id, router]);
+
+  return null;
 }

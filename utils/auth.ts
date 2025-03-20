@@ -1,0 +1,88 @@
+import { db } from "@/db";
+import { users } from "@/db/schema";
+import { eq } from "drizzle-orm";
+import crypto from "crypto";
+
+export async function authenticateUser(email: string, password: string) {
+  if (typeof window !== "undefined") {
+    throw new Error("This function can only be called from the server side");
+  }
+
+  try {
+    const result = await db.select().from(users).where(eq(users.email, email));
+    const user = result[0];
+
+    if (!user) {
+      return null;
+    }
+
+    const isValidPassword = await comparePasswords(password, user.password);
+
+    if (!isValidPassword) {
+      return null;
+    }
+
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    };
+  } catch (error) {
+    console.error("Authentication error:", error);
+    return null;
+  }
+}
+
+export async function createUser(name: string, email: string, password: string) {
+  if (typeof window !== "undefined") {
+    throw new Error("This function can only be called from the server side");
+  }
+
+  const hashedPassword = await hashPassword(password);
+
+  try {
+    const result = await db.insert(users).values({
+      name,
+      email,
+      password: hashedPassword,
+    }).returning();
+
+    if (!result || result.length === 0) {
+      throw new Error("Failed to create user");
+    }
+
+    const user = result[0];
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    };
+  } catch (error: any) {
+    console.error("User creation error:", error);
+    // Handle unique constraint violation
+    if (error.code === "23505") {
+      throw new Error("Email already exists");
+    }
+    throw error;
+  }
+}
+
+async function hashPassword(password: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const salt = crypto.randomBytes(16).toString('hex');
+    crypto.pbkdf2(password, salt, 100000, 64, 'sha512', (err: Error | null, derivedKey: Buffer) => {
+      if (err) reject(err);
+      resolve(salt + ':' + derivedKey.toString('hex'));
+    });
+  });
+}
+
+async function comparePasswords(password: string, hashedPassword: string): Promise<boolean> {
+  return new Promise((resolve, reject) => {
+    const [salt, key] = hashedPassword.split(':');
+    crypto.pbkdf2(password, salt, 100000, 64, 'sha512', (err: Error | null, derivedKey: Buffer) => {
+      if (err) reject(err);
+      resolve(key === derivedKey.toString('hex'));
+    });
+  });
+} 

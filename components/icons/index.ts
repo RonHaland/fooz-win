@@ -1,4 +1,11 @@
 export { PlayIcon } from './PlayIcon';
 export { PauseIcon } from './PauseIcon';
 export { StopIcon } from './StopIcon';
-export { PencilIcon } from './PencilIcon'; 
+export { PencilIcon } from './PencilIcon';
+export { FootballIcon } from './FootballIcon';
+export { SoccerballIcon } from './SoccerballIcon';
+export { TrashIcon } from './TrashIcon';
+export { ArrowLeftIcon } from './ArrowLeftIcon';
+export { InfoIcon } from './InfoIcon';
+export { PlusIcon } from './PlusIcon';
+export { LogOutIcon } from './LogOutIcon'; 

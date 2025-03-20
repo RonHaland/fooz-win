@@ -40,11 +40,22 @@ export function GameCard({
         </button>
       </h2>
       <div className="flex flex-col gap-4">
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-4">
           {game.teams.map((team, i) => (
-            <div key={i} className="bg-slate-700/30 rounded-lg p-3">
+            <div
+              key={i}
+              className={`bg-gradient-to-br from-slate-700/40 to-slate-800/40 rounded-lg p-4 border ${
+                i === 0
+                  ? "border-blue-500/30 shadow-lg shadow-blue-500/5"
+                  : "border-amber-500/30 shadow-lg shadow-amber-500/5"
+              }`}
+            >
               <div className="grid grid-cols-[1fr_auto] items-center mb-4 text-center">
-                <h3 className="text-lg font-semibold text-emerald-400">
+                <h3
+                  className={`text-lg font-semibold ${
+                    i === 0 ? "text-blue-400" : "text-amber-400"
+                  }`}
+                >
                   Team {i + 1}
                 </h3>
                 <div className="flex items-center gap-2">
@@ -52,14 +63,26 @@ export function GameCard({
                     onClick={() =>
                       onScoreChange(i, team.score > 0 ? team.score - 1 : 10)
                     }
-                    className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-600/50 text-slate-300 hover:bg-slate-600 transition-colors"
+                    className={`w-8 h-8 flex items-center justify-center rounded-lg ${
+                      i === 0
+                        ? "bg-blue-500/20 text-blue-300 hover:bg-blue-500/30"
+                        : "bg-amber-500/20 text-amber-300 hover:bg-amber-500/30"
+                    } transition-colors`}
                     aria-label="Decrease score"
                   >
                     -
                   </button>
                   <div className="flex items-center gap-1">
-                    <FootballIcon className="h-4 w-4 text-amber-400" />
-                    <span className="text-white font-bold w-4 text-center">
+                    <FootballIcon
+                      className={`h-4 w-4 ${
+                        i === 0 ? "text-blue-400" : "text-amber-400"
+                      }`}
+                    />
+                    <span
+                      className={`font-bold w-4 text-center ${
+                        i === 0 ? "text-blue-400" : "text-amber-400"
+                      }`}
+                    >
                       {team.score}
                     </span>
                   </div>
@@ -67,24 +90,38 @@ export function GameCard({
                     onClick={() =>
                       onScoreChange(i, team.score < 10 ? team.score + 1 : 0)
                     }
-                    className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-600/50 text-slate-300 hover:bg-slate-600 transition-colors"
+                    className={`w-8 h-8 flex items-center justify-center rounded-lg ${
+                      i === 0
+                        ? "bg-blue-500/20 text-blue-300 hover:bg-blue-500/30"
+                        : "bg-amber-500/20 text-amber-300 hover:bg-amber-500/30"
+                    } transition-colors`}
                     aria-label="Increase score"
                   >
                     +
                   </button>
                 </div>
               </div>
-              <div className="grid grid-cols-[1fr_15px_1fr] gap-1">
+              <div className="grid grid-cols-[1fr_15px_1fr] gap-2">
                 <p
                   key={team.players[0].id}
-                  className="text-slate-200 text-center whitespace-nowrap text-ellipsis"
+                  className={`text-center whitespace-nowrap text-ellipsis place-self-end ${
+                    i === 0 ? "text-blue-200" : "text-amber-200"
+                  }`}
                 >
                   {getPlayerName(team.players[0].id)}
                 </p>
-                <span className="text-slate-200 text-center">&</span>
+                <span
+                  className={`text-center ${
+                    i === 0 ? "text-blue-400" : "text-amber-400"
+                  }`}
+                >
+                  &
+                </span>
                 <p
                   key={team.players[1].id}
-                  className="text-slate-200 text-center whitespace-nowrap text-ellipsis"
+                  className={`text-center whitespace-nowrap text-ellipsis place-self-start ${
+                    i === 0 ? "text-blue-200" : "text-amber-200"
+                  }`}
                 >
                   {getPlayerName(team.players[1].id)}
                 </p>

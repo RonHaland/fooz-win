@@ -35,6 +35,10 @@ export default function TournamentOverviewPage({
     setTournament(updatedTournament);
   };
 
+  const handleAdminTabClick = () => {
+    router.push(`/tournament/${id}/admin`);
+  };
+
   const addNewGame = () => {
     if (!tournament) return;
 
@@ -118,7 +122,7 @@ export default function TournamentOverviewPage({
         <Scoreboard
           players={tournament.players}
           games={tournament.games}
-          onClickAdminTab={() => router.push(`/tournament/${id}/admin`)}
+          onClickAdminTab={handleAdminTabClick}
         />
       </section>
 
