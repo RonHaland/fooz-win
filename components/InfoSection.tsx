@@ -5,7 +5,7 @@ export function InfoSection() {
     <div className="mt-12 pt-8 border-t border-slate-700/50">
       <div className="grid md:grid-cols-2 gap-8">
         <div>
-          <h3 className="text-lg font-semibold text-white mb-4">How to Use</h3>
+          <h2 className="text-lg font-semibold text-white mb-4">How to Use</h2>
           <div className="space-y-3 text-sm text-slate-300">
             <p>
               <span className="font-medium text-emerald-400">
@@ -29,7 +29,15 @@ export function InfoSection() {
               <span className="font-medium text-emerald-400">
                 Update Scores:
               </span>{" "}
-              Click on <span className="rounded px-1 bg-white/10 border border-white/20">+</span> or <span className="rounded px-1 bg-white/10 border border-white/20">-</span> on a game card to update the score for a game.
+              Click on{" "}
+              <span className="rounded px-1 bg-white/10 border border-white/20">
+                +
+              </span>{" "}
+              or{" "}
+              <span className="rounded px-1 bg-white/10 border border-white/20">
+                -
+              </span>{" "}
+              on a game card to update the score for a game.
             </p>
             <p>
               <span className="font-medium text-emerald-400">
@@ -42,9 +50,9 @@ export function InfoSection() {
         </div>
 
         <div>
-          <h3 className="text-lg font-semibold text-white mb-3">
+          <h2 className="text-lg font-semibold text-white mb-3">
             Data Storage
-          </h3>
+          </h2>
           <p className="text-sm text-slate-300">
             All tournament data is stored locally in your browser using
             localStorage. This means:

@@ -9,3 +9,7 @@ export { ArrowLeftIcon } from './ArrowLeftIcon';
 export { InfoIcon } from './InfoIcon';
 export { PlusIcon } from './PlusIcon';
 export { LogOutIcon } from './LogOutIcon'; 
+export { ProfileIcon } from './ProfileIcon';
+export { LoginIcon } from './LoginIcon';
+export { MenuIcon } from './MenuIcon';
+export { XIcon } from './XIcon';

@@ -69,7 +69,7 @@ export function GamesContainer({ tournament, onUpdate }: GamesContainerProps) {
             <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
             <h3 className="text-xl font-bold text-white">Current Game</h3>
           </div>
-          <div className="bg-slate-800/50 rounded-xl border-2 border-emerald-500/50 p-6 shadow-lg shadow-emerald-500/10">
+          <div className="bg-slate-800/50 rounded-xl border-2 border-emerald-500/50 sm:p-4 shadow-lg shadow-emerald-500/10">
             <GameCard
               game={currentGame}
               index={tournament.games.length - 1}
@@ -91,7 +91,7 @@ export function GamesContainer({ tournament, onUpdate }: GamesContainerProps) {
       {gameHistory.length > 0 && (
         <section className="space-y-4">
           <h3 className="text-xl font-bold text-white/80">Game History</h3>
-          <div className="bg-slate-800/30 rounded-xl border border-slate-700/50 p-4">
+          <div className="bg-slate-800/30 rounded-xl sm:border border-slate-700/50 sm:p-4">
             <GamesList
               games={gameHistory}
               players={tournament.players}

@@ -36,7 +36,7 @@ export default function TournamentLayout({
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800">
-      <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-4 mb-8">
           <Link
             href="/"
@@ -47,10 +47,10 @@ export default function TournamentLayout({
           </Link>
           <div className="min-w-0 flex-1">
             <h1
-              className="text-4xl font-bold"
+              className="text-3xl sm:text-4xl font-bold overflow-hidden text-ellipsis"
               style={{ viewTransitionName: `tournament-card-${tournament.id}` }}
             >
-              <span className="bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent inline-block">
+              <span className="bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent block truncate">
                 {tournament.name}
               </span>
             </h1>

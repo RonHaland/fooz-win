@@ -2,8 +2,60 @@ import { db } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import crypto from "crypto";
+import { AuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+export const authOptions: AuthOptions = {
+  providers: [
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" }
+      },
+      async authorize(credentials) {
+        if (!credentials?.email) {
+          return null;
+        }
 
-export async function authenticateUser(email: string, password: string) {
+        // If no password is provided, this is a session refresh
+        if (!credentials.password) {
+          const user = await authenticateUser(credentials.email, "", true);
+          if (!user) {
+            return null;
+          }
+          return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+          };
+        }
+
+        const user = await authenticateUser(
+          credentials.email,
+          credentials.password
+        );
+
+        if (!user) {
+          return null;
+        }
+
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+        };
+      }
+    })
+  ],
+  pages: {
+    signIn: "/login",
+  },
+  session: {
+    strategy: "jwt" as const,
+  },
+};
+
+export async function authenticateUser(email: string, password: string, skipPasswordCheck: boolean = false) {
   if (typeof window !== "undefined") {
     throw new Error("This function can only be called from the server side");
   }
@@ -16,10 +68,11 @@ export async function authenticateUser(email: string, password: string) {
       return null;
     }
 
-    const isValidPassword = await comparePasswords(password, user.password);
-
-    if (!isValidPassword) {
-      return null;
+    if (!skipPasswordCheck) {
+      const isValidPassword = await comparePasswords(password, user.password);
+      if (!isValidPassword) {
+        return null;
+      }
     }
 
     return {
