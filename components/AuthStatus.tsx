@@ -1,38 +1,55 @@
 "use client";
 
 import { signOut, useSession } from "next-auth/react";
-import { LogOutIcon } from "@/components/icons";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { ProfileIcon } from "@/components/icons/ProfileIcon";
+import { LogOutIcon } from "@/components/icons/LogOutIcon";
+import { LoginIcon } from "@/components/icons/LoginIcon";
+import { MobileMenu } from "@/components/MobileMenu";
 
 export function AuthStatus() {
   const { data: session } = useSession();
-  const router = useRouter();
+
+  if (!session?.user) {
+    return (
+      <div className="px-4">
+        <Link
+          href="/login"
+          className="flex items-center gap-2 text-slate-300 hover:text-white transition-colors"
+        >
+          <LoginIcon className="w-5 h-5" />
+          <span>Login</span>
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center gap-4">
-      {session ? (
-        <>
-          <span className="text-slate-300 text-sm">
-            {session.user?.name || "User"}
-          </span>
-          <button
-            onClick={() => signOut()}
-            className="flex items-center gap-2 px-3 py-1.5 bg-slate-700/50 hover:bg-slate-700 
-                     text-slate-300 rounded-lg transition-colors duration-200"
-          >
-            <LogOutIcon className="h-4 w-4" />
-            <span className="text-sm">Logout</span>
-          </button>
-        </>
-      ) : (
-        <button
-          onClick={() => router.push("/login")}
-          className="flex items-center gap-2 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 
-                   text-white rounded-lg transition-colors duration-200"
+      {/* Mobile menu */}
+      <div className="sm:hidden px-4">
+        <MobileMenu />
+      </div>
+
+      {/* Desktop buttons */}
+      <div className="hidden sm:flex items-center gap-4">
+        <Link
+          href="/profile"
+          className="flex items-center gap-2 px-3 py-2 text-slate-300 hover:text-white 
+                   hover:bg-slate-700/50 rounded-lg transition-colors"
         >
-          <span className="text-sm">Login</span>
+          <ProfileIcon className="w-5 h-5" />
+          <span>Profile</span>
+        </Link>
+        <button
+          onClick={() => signOut({ callbackUrl: "/" })}
+          className="flex items-center gap-2 px-3 py-2 text-slate-300 hover:text-white 
+                   hover:bg-slate-700/50 rounded-lg transition-colors cursor-pointer"
+        >
+          <LogOutIcon className="w-5 h-5" />
+          <span>Logout</span>
         </button>
-      )}
+      </div>
     </div>
   );
 }

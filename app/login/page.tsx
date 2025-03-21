@@ -4,6 +4,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { registerUser } from "@/app/actions";
+import { InfoIcon } from "@/components/icons/InfoIcon";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -55,7 +56,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 flex items-center justify-center px-4">
+    <div className="flex justify-center px-4 pt-12 sm:pt-24">
       <div className="w-full max-w-md">
         <div className="bg-slate-800/50 rounded-xl border border-slate-700/50 p-8 shadow-lg">
           <h1 className="text-3xl font-bold text-white mb-8 text-center">
@@ -144,6 +145,33 @@ export default function LoginPage() {
               ? "Already have an account? Login"
               : "Don't have an account? Register"}
           </button>
+        </div>
+
+        <div className="mt-8 bg-slate-800/30 rounded-lg border border-slate-700/50 p-6">
+          <div className="flex items-start gap-3">
+            <InfoIcon className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0" />
+            <div className="space-y-4">
+              <h2 className="text-lg font-semibold text-white">
+                About Your Data
+              </h2>
+              <div className="space-y-3 text-sm text-slate-300">
+                <p>
+                  Your account information is securely stored in our database.
+                  We use:
+                </p>
+                <ul className="list-disc list-inside space-y-2">
+                  <li>Password hashing with PBKDF2 for security</li>
+                  <li>JWT tokens for session management</li>
+                  <li>Secure HTTP-only cookies for authentication</li>
+                </ul>
+                <p>
+                  By logging in, you agree to our use of cookies to maintain
+                  your session. You can clear your session at any time using the
+                  logout button.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
