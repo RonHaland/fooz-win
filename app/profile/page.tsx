@@ -115,7 +115,7 @@ export default function ProfilePage() {
                   <div className="text-white">{user.name}</div>
                   <button
                     onClick={() => setIsEditing(true)}
-                    className="text-emerald-400 hover:text-emerald-300 transition-colors"
+                    className="text-emerald-400 transition-colors p-2 hover:cursor-pointer bg-emerald-600/20 hover:bg-emerald-600/50 rounded-md hover:text-white"
                   >
                     Edit
                   </button>
