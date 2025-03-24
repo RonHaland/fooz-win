@@ -153,7 +153,7 @@ export async function publishTournament(
         .where(eq(tournamentAdmins.tournamentId, tournament.id));
 
       for (const admin of tournament.admins) {
-        if (existingAdmins.find((a) => a.id === admin.id)) {
+        if (existingAdmins.find((a) => a.userId === admin.id)) {
           await db
             .update(tournamentAdmins)
             .set({
@@ -173,14 +173,16 @@ export async function publishTournament(
         .where(eq(tournamentUsers.tournamentId, tournament.id));
 
       for (const user of tournament.users) {
-        if (existingUsers.find((u) => u.id === user.id)) {
+        if (existingUsers.find((u) => u.userId === user.id)) {
+          console.log("updating user", user.id);
           await db
             .update(tournamentUsers)
             .set({
               userId: user.id,
             })
-            .where(eq(tournamentUsers.id, user.id));
+            .where(eq(tournamentUsers.userId, user.id));
         } else {
+          console.log("inserting user", user.id);
           await db.insert(tournamentUsers).values({
             tournamentId: tournament.id,
             userId: user.id,

@@ -10,9 +10,14 @@ import { unstable_ViewTransition as ViewTransition } from "react";
 type GamesContainerProps = {
   tournament: Tournament;
   onUpdate: (tournament: Tournament) => void;
+  isAdmin: boolean;
 };
 
-export function GamesContainer({ tournament, onUpdate }: GamesContainerProps) {
+export function GamesContainer({
+  tournament,
+  onUpdate,
+  isAdmin,
+}: GamesContainerProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const pairingTracker = useRef(new Set<string>());
 
@@ -81,6 +86,7 @@ export function GamesContainer({ tournament, onUpdate }: GamesContainerProps) {
                   onScoreChange={(teamIndex, newScore) =>
                     handleScoreChange(currentGame.id, teamIndex, newScore)
                   }
+                  isAdmin={isAdmin}
                 />
               </ViewTransition>
             </div>
@@ -97,6 +103,7 @@ export function GamesContainer({ tournament, onUpdate }: GamesContainerProps) {
                 players={tournament.players}
                 onDeleteGame={handleDeleteGame}
                 onScoreChange={handleScoreChange}
+                isAdmin={isAdmin}
               />
             </div>
           </section>

@@ -5,12 +5,14 @@ type ScoreboardProps = {
   players: Player[];
   games: Game[];
   onClickAdminTab?: () => void;
+  isAdmin?: boolean;
 };
 
 export function Scoreboard({
   players,
   games,
   onClickAdminTab,
+  isAdmin = false,
 }: ScoreboardProps) {
   const playerScores = players.reduce((acc, player) => {
     acc[player.id] = games.reduce((score, game) => {
@@ -96,7 +98,7 @@ export function Scoreboard({
               </tbody>
             </table>
           )}
-          {!players.length && (
+          {!players.length && isAdmin && (
             <div className="flex flex-col p-6 items-center">
               <span>
                 Add players in the{" "}

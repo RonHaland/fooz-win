@@ -10,6 +10,7 @@ type GamesListProps = {
   players: Player[];
   onDeleteGame: (gameId: string) => void;
   onScoreChange: (gameId: string, teamIndex: number, newScore: number) => void;
+  isAdmin: boolean;
 };
 
 export function GamesList({
@@ -17,6 +18,7 @@ export function GamesList({
   players,
   onDeleteGame,
   onScoreChange,
+  isAdmin,
 }: GamesListProps) {
   const [deleteConfirmation, setDeleteConfirmation] = useState<string | null>(
     null
@@ -35,6 +37,7 @@ export function GamesList({
               onScoreChange={(teamIndex, newScore) =>
                 onScoreChange(game.id, teamIndex, newScore)
               }
+              isAdmin={isAdmin}
             />
           </ViewTransition>
         ))}

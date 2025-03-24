@@ -15,11 +15,10 @@ export default function TournamentOverviewPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  console.log("object");
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { id } = use(params);
-  const { tournament, setTournament } = useTournament(id);
+  const { tournament, setTournament, isAdmin } = useTournament(id);
 
   const handleUpdateTournament = (updatedTournament: Tournament) => {
     updatedTournament.updatedAt = new Date().toISOString();
@@ -116,6 +115,7 @@ export default function TournamentOverviewPage({
             players={tournament.players}
             games={tournament.games}
             onClickAdminTab={handleAdminTabClick}
+            isAdmin={isAdmin}
           />
         </section>
 
@@ -128,19 +128,22 @@ export default function TournamentOverviewPage({
         <section className="space-y-6">
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-bold text-white">Games</h2>
-            <button
-              onClick={addNewGame}
-              className="bg-emerald-700 hover:bg-emerald-600 text-white font-semibold px-6 py-3 
+            {isAdmin && (
+              <button
+                onClick={addNewGame}
+                className="bg-emerald-700 hover:bg-emerald-600 text-white font-semibold px-6 py-3 
                       rounded-xl transition-all duration-200 transform hover:scale-105 flex items-center 
                       gap-2 hover:shadow-lg shadow-emerald-800/40 hover:cursor-pointer"
-            >
-              <PlusIcon className="h-5 w-5" />
-              Add Game
-            </button>
+              >
+                <PlusIcon className="h-5 w-5" />
+                Add Game
+              </button>
+            )}
           </div>
           <GamesContainer
             tournament={tournament}
             onUpdate={handleUpdateTournament}
+            isAdmin={isAdmin}
           />
         </section>
 
