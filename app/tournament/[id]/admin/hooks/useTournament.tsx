@@ -4,11 +4,14 @@ import { useEffect } from "react";
 import { getPublishedTournament, publishTournament } from "@/app/actions";
 import { Tournament } from "@/types/game";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 export function useTournament(id: string) {
   const [tournament, setTournament] = useState<Tournament | null>(null);
   const [isOnline, setIsOnline] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const router = useRouter();
+  const session = useSession();
 
   useEffect(() => {
     const loadTournament = async () => {
@@ -27,11 +30,20 @@ export function useTournament(id: string) {
         }
         setIsOnline(true);
         setTournament(publishedTournament);
+        setIsAdmin(
+          (publishedTournament?.ownerId === session.data?.user?.id ||
+            publishedTournament?.admins.some(
+              (admin) => admin.id === session.data?.user?.id
+            )) ??
+            false
+        );
+        return;
       }
+      setIsAdmin(true);
       setTournament(loadedTournament);
     };
     loadTournament();
-  }, [id, router]);
+  }, [id, router, session.data?.user?.id]);
 
   async function saveTournamentInternal(
     tournament: Tournament,
@@ -52,5 +64,5 @@ export function useTournament(id: string) {
     save();
   }, [tournament, isOnline]);
 
-  return { tournament, isOnline, setTournament };
+  return { tournament, isOnline, isAdmin, setTournament };
 }

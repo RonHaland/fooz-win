@@ -9,6 +9,7 @@ interface AccessManagementSectionProps {
   onAddUserByEmail: (isAdmin: boolean) => void;
   onDeleteUser: (userId: string) => void;
   setNewUserEmail: (email: string) => void;
+  onTogglePublic: (isPublic: boolean) => void;
 }
 
 export function AccessManagementSection({
@@ -17,6 +18,7 @@ export function AccessManagementSection({
   onAddUserByEmail,
   onDeleteUser,
   setNewUserEmail,
+  onTogglePublic,
 }: AccessManagementSectionProps) {
   return (
     <section className="bg-slate-800/50 rounded-xl border border-slate-700/50">
@@ -24,6 +26,15 @@ export function AccessManagementSection({
         <h2 className="text-2xl font-bold text-white">Manage access</h2>
       </div>
       <div className="p-6 space-y-4">
+        <div className="flex items-center justify-between">
+          <label className="text-white font-medium">Public Tournament</label>
+          <input
+            type="checkbox"
+            checked={tournament.isPublic || false}
+            onChange={(e) => onTogglePublic(e.target.checked)}
+            className="w-5 h-5 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
+          />
+        </div>
         <div className="flex flex-col gap-2">
           {tournament.users.map((u) => (
             <div key={u.id} className="flex justify-between">

@@ -206,6 +206,14 @@ export default function TournamentAdminPage({
     handleUpdateTournament(updatedTournament);
   };
 
+  const handleTogglePublic = (isPublic: boolean) => {
+    if (!tournament) return;
+    handleUpdateTournament({
+      ...tournament,
+      isPublic,
+    });
+  };
+
   if (!tournament) return null;
 
   return (
@@ -235,6 +243,7 @@ export default function TournamentAdminPage({
         onAddUserByEmail={handleAddUserByEmail}
         onDeleteUser={handleDelete}
         setNewUserEmail={setNewUserEmail}
+        onTogglePublic={handleTogglePublic}
       />
 
       <ErrorModal

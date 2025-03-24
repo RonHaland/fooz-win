@@ -72,6 +72,7 @@ export function createTournament(name: string, ownerId?: string): Tournament {
     users: [],
     admins: [],
     isActive: false,
+    isPublic: false,
   };
   saveTournament(tournament);
   return tournament;

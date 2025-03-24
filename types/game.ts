@@ -27,6 +27,7 @@ export type Tournament = {
   updatedAt: string;
   isActive: boolean;
   config?: TournamentConfig;
+  isPublic?: boolean;
 };
 
 export type TournamentConfig = {

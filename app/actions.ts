@@ -61,6 +61,7 @@ export async function publishTournament(
         id: tournaments.id,
         name: tournaments.name,
         isActive: tournaments.isActive,
+        isPublic: tournaments.isPublic,
         ownerId: tournaments.ownerId,
         createdAt: tournaments.createdAt,
         updatedAt: tournaments.updatedAt,
@@ -79,6 +80,7 @@ export async function publishTournament(
         .set({
           name: tournament.name,
           isActive: true,
+          isPublic: tournament.isPublic,
           updatedAt: new Date(),
         })
         .where(eq(tournaments.id, tournament.id));
@@ -195,6 +197,7 @@ export async function publishTournament(
       createdBy: session.user.id,
       ownerId: session.user.id,
       isActive: true,
+      isPublic: tournament.isPublic,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
@@ -279,15 +282,14 @@ export async function getPublishedTournament(
   id: string
 ): Promise<Tournament | null> {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.id) {
-    return null;
-  }
+  const userId = session?.user?.id ?? crypto.randomUUID();
   try {
     const [tournament] = await db
       .select({
         id: tournaments.id,
         name: tournaments.name,
         isActive: tournaments.isActive,
+        isPublic: tournaments.isPublic,
         ownerId: tournaments.ownerId,
         createdAt: tournaments.createdAt,
         updatedAt: tournaments.updatedAt,
@@ -305,9 +307,10 @@ export async function getPublishedTournament(
         and(
           eq(tournaments.id, id),
           or(
-            eq(tournaments.ownerId, session.user.id),
-            eq(tournamentAdmins.userId, session.user.id),
-            eq(tournamentUsers.userId, session.user.id)
+            eq(tournaments.ownerId, userId),
+            eq(tournamentAdmins.userId, userId),
+            eq(tournamentUsers.userId, userId),
+            eq(tournaments.isPublic, true)
           )
         )
       )

@@ -1,4 +1,11 @@
-import { pgTable, text, timestamp, uuid, integer, boolean } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+  integer,
+  boolean,
+} from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -13,7 +20,9 @@ export const tournaments = pgTable("tournaments", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: text("name").notNull(),
   isPublic: boolean("is_public").default(false).notNull(),
-  createdBy: uuid("created_by").references(() => users.id).notNull(),
+  createdBy: uuid("created_by")
+    .references(() => users.id)
+    .notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
   isActive: boolean("is_active").default(true).notNull(),
@@ -22,7 +31,9 @@ export const tournaments = pgTable("tournaments", {
 
 export const players = pgTable("players", {
   id: uuid("id").defaultRandom().primaryKey(),
-  tournamentId: uuid("tournament_id").references(() => tournaments.id).notNull(),
+  tournamentId: uuid("tournament_id")
+    .references(() => tournaments.id)
+    .notNull(),
   name: text("name").notNull(),
   isEnabled: boolean("is_enabled").default(true).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -31,11 +42,21 @@ export const players = pgTable("players", {
 
 export const games = pgTable("games", {
   id: uuid("id").defaultRandom().primaryKey(),
-  tournamentId: uuid("tournament_id").references(() => tournaments.id).notNull(),
-  team1Player1Id: uuid("team1_player1_id").references(() => players.id).notNull(),
-  team1Player2Id: uuid("team1_player2_id").references(() => players.id).notNull(),
-  team2Player1Id: uuid("team2_player1_id").references(() => players.id).notNull(),
-  team2Player2Id: uuid("team2_player2_id").references(() => players.id).notNull(),
+  tournamentId: uuid("tournament_id")
+    .references(() => tournaments.id)
+    .notNull(),
+  team1Player1Id: uuid("team1_player1_id")
+    .references(() => players.id)
+    .notNull(),
+  team1Player2Id: uuid("team1_player2_id")
+    .references(() => players.id)
+    .notNull(),
+  team2Player1Id: uuid("team2_player1_id")
+    .references(() => players.id)
+    .notNull(),
+  team2Player2Id: uuid("team2_player2_id")
+    .references(() => players.id)
+    .notNull(),
   team1Score: integer("team1_score").notNull(),
   team2Score: integer("team2_score").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -44,12 +65,20 @@ export const games = pgTable("games", {
 
 export const tournamentAdmins = pgTable("tournament_admins", {
   id: uuid("id").defaultRandom().primaryKey(),
-  tournamentId: uuid("tournament_id").references(() => tournaments.id).notNull(),
-  userId: uuid("user_id").references(() => users.id).notNull(),
+  tournamentId: uuid("tournament_id")
+    .references(() => tournaments.id)
+    .notNull(),
+  userId: uuid("user_id")
+    .references(() => users.id)
+    .notNull(),
 });
 
 export const tournamentUsers = pgTable("tournament_users", {
   id: uuid("id").defaultRandom().primaryKey(),
-  tournamentId: uuid("tournament_id").references(() => tournaments.id).notNull(),
-  userId: uuid("user_id").references(() => users.id).notNull(),
-}); 
+  tournamentId: uuid("tournament_id")
+    .references(() => tournaments.id)
+    .notNull(),
+  userId: uuid("user_id")
+    .references(() => users.id)
+    .notNull(),
+});

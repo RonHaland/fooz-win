@@ -15,6 +15,7 @@ export default function TournamentOverviewPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  console.log("object");
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { id } = use(params);
