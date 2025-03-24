@@ -1,5 +1,5 @@
 export type Player = {
-  id: number;
+  id: string;
   name: string;
   isEnabled: boolean;
 };
@@ -10,6 +10,7 @@ export type Team = {
 };
 
 export type Game = {
+  id: string;
   teams: Team[];
   sittingOut?: Player[];
 };
@@ -17,10 +18,14 @@ export type Game = {
 export type Tournament = {
   id: string;
   name: string;
+  ownerId: string;
   players: Player[];
+  users: User[];
+  admins: User[];
   games: Game[];
   createdAt: string;
   updatedAt: string;
+  isActive: boolean;
   config?: TournamentConfig;
 };
 
@@ -29,4 +34,10 @@ export type TournamentConfig = {
   timerDuration: number;
   enableOvertimer: boolean;
   overtimerDuration: number;
+};
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
 }

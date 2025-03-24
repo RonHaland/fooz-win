@@ -8,11 +8,11 @@ import { TrashIcon } from "./icons/TrashIcon";
 
 type PlayerStatsProps = {
   players: Player[];
-  gamesPlayed: Record<number, number>;
-  onToggleEnabled: (playerId: number) => void;
-  onRenamePlayer: (playerId: number, newName: string) => void;
+  gamesPlayed: Record<string, number>;
+  onToggleEnabled: (playerId: string) => void;
+  onRenamePlayer: (playerId: string, newName: string) => void;
   onAddPlayer: (name: string) => void;
-  onDeletePlayer: (playerId: number) => void;
+  onDeletePlayer: (playerId: string) => void;
 };
 
 export function PlayerStats({
@@ -23,11 +23,11 @@ export function PlayerStats({
   onAddPlayer,
   onDeletePlayer,
 }: PlayerStatsProps) {
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState<{
-    playerId: number;
+    playerId: string;
     playerName: string;
   } | null>(null);
 

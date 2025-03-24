@@ -22,13 +22,15 @@ export function GameCard({
 }: GameCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Helper function to get current player name
-  const getPlayerName = (playerId: number) => {
+  const getPlayerName = (playerId: string) => {
     return players.find((p) => p.id === playerId)?.name || "Unknown Player";
   };
 
   return (
-    <article className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-4 flex flex-col gap-3 shadow-lg hover:shadow-xl transition-shadow border border-white/10">
+    <article
+      className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-4 flex flex-col 
+            gap-3 shadow-lg hover:shadow-xl transition-shadow border border-white/10"
+    >
       <h2 className="text-2xl font-bold text-white border-b border-slate-700 pb-1 px-2 flex justify-between items-center">
         <span>Game {index + 1}</span>
         <button

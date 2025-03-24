@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
+import { use } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { Tournament } from "@/types/game";
-import { getTournament } from "@/utils/storage";
 import { ArrowLeftIcon } from "@/components/icons/ArrowLeftIcon";
 import { FootballIcon } from "@/components/icons/FootballIcon";
 import Link from "next/link";
+import { useTournament } from "./admin/hooks/useTournament";
 
 export default function TournamentLayout({
   children,
@@ -17,17 +16,8 @@ export default function TournamentLayout({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [tournament, setTournament] = useState<Tournament | null>(null);
   const { id } = use(params);
-
-  useEffect(() => {
-    const loadedTournament = getTournament(id);
-    if (!loadedTournament) {
-      router.push("/");
-      return;
-    }
-    setTournament(loadedTournament);
-  }, [id, router]);
+  const { tournament, isOnline } = useTournament(id);
 
   if (!tournament) return null;
 
@@ -50,11 +40,17 @@ export default function TournamentLayout({
               className="text-3xl sm:text-4xl font-bold overflow-hidden text-ellipsis"
               style={{ viewTransitionName: `tournament-card-${tournament.id}` }}
             >
-              <span className="bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent block truncate">
+              <span className="bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent truncate">
                 {tournament.name}
               </span>
             </h1>
             <p className="text-slate-400 text-sm flex items-center gap-2">
+              {isOnline ? (
+                <span className="text-emerald-400">Online</span>
+              ) : (
+                <span className="text-gray-400">Offline</span>
+              )}
+              <span className="text-slate-600">•</span>
               <span className="flex items-center">
                 <FootballIcon className="h-4 w-4 mr-1" />
                 {tournament.games.length} games
