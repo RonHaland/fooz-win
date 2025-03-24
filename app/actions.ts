@@ -313,7 +313,6 @@ export async function getPublishedTournament(
       )
       .limit(1);
 
-    console.log(tournament);
     if (!tournament) return null;
 
     // Get players

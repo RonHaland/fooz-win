@@ -20,7 +20,7 @@ export function Scoreboard({
       return score + (playerTeam?.score || 0);
     }, 0);
     return acc;
-  }, {} as Record<number, number>);
+  }, {} as Record<string, number>);
 
   // Sort players by score in descending order
   const sortedPlayers = [...players].sort(

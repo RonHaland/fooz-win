@@ -54,10 +54,11 @@ export function getAllTournaments(): Tournament[] {
     );
 }
 
-export function createTournament(name: string): Tournament {
+export function createTournament(name: string, ownerId?: string): Tournament {
   const tournament: Tournament = {
     id: crypto.randomUUID(),
     name,
+    ownerId: ownerId,
     players: [],
     games: [],
     createdAt: new Date().toISOString(),

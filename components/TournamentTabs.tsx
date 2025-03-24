@@ -34,7 +34,7 @@ export function TournamentTabs({ tournament, onUpdate }: TournamentTabsProps) {
       return count + (isPlaying ? 1 : 0);
     }, 0);
     return acc;
-  }, {} as Record<number, number>);
+  }, {} as Record<string, number>);
 
   // Initialize pairingTracker
   useEffect(() => {
@@ -43,7 +43,7 @@ export function TournamentTabs({ tournament, onUpdate }: TournamentTabsProps) {
       game.teams.forEach((team) => {
         const teamKey = team.players
           .map((p) => p.id)
-          .sort((a, b) => a - b)
+          .sort((a, b) => a.toString().localeCompare(b.toString()))
           .join("-");
         pairingTracker.current.add(teamKey);
       });
@@ -109,11 +109,11 @@ export function TournamentTabs({ tournament, onUpdate }: TournamentTabsProps) {
 
       const team1Key = possibleTeam1
         .map((p) => p.id)
-        .sort((a, b) => a - b)
+        .sort((a, b) => a.toString().localeCompare(b.toString()))
         .join("-");
       const team2Key = possibleTeam2
         .map((p) => p.id)
-        .sort((a, b) => a - b)
+        .sort((a, b) => a.toString().localeCompare(b.toString()))
         .join("-");
 
       if (
@@ -131,6 +131,7 @@ export function TournamentTabs({ tournament, onUpdate }: TournamentTabsProps) {
     }
 
     const newGame: Game = {
+      id: crypto.randomUUID(),
       teams: [
         { players: team1, score: 0 },
         { players: team2, score: 0 },
@@ -303,7 +304,7 @@ export function TournamentTabs({ tournament, onUpdate }: TournamentTabsProps) {
                 }}
                 onAddPlayer={(name) => {
                   const newPlayer = {
-                    id: Math.max(...tournament.players.map((p) => p.id), 0) + 1,
+                    id: crypto.randomUUID(),
                     name,
                     isEnabled: true,
                   };

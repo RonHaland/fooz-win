@@ -18,7 +18,7 @@ export type Game = {
 export type Tournament = {
   id: string;
   name: string;
-  ownerId: string;
+  ownerId?: string;
   players: Player[];
   users: User[];
   admins: User[];
