@@ -61,8 +61,10 @@ export function useTournament(id: string) {
         await saveTournamentInternal(tournament, isOnline);
       }
     }
+    console.log("saving tournament", tournament);
     save();
-  }, [tournament, isOnline]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tournament]);
 
   return { tournament, isOnline, isAdmin, setTournament };
 }
