@@ -119,6 +119,11 @@ export async function publishTournament(
           });
         }
       }
+      for (const existingGame of existingGames) {
+        if (!tournament.games.find((g) => g.id === existingGame.id)) {
+          await db.delete(games).where(eq(games.id, existingGame.id));
+        }
+      }
 
       const existingPlayers = await db
         .select()
@@ -360,17 +365,6 @@ export async function getPublishedTournament(
       .leftJoin(users, eq(tournamentUsers.userId, users.id))
       .where(eq(tournamentUsers.tournamentId, id));
 
-    const team1 = tournamentPlayers.filter(
-      (player) =>
-        player.id === tournamentGames[0].team1Player1Id ||
-        player.id === tournamentGames[0].team1Player2Id
-    );
-    const team2 = tournamentPlayers.filter(
-      (player) =>
-        player.id === tournamentGames[0].team2Player1Id ||
-        player.id === tournamentGames[0].team2Player2Id
-    );
-
     return {
       ...tournament,
       ownerId: tournament.ownerId ?? "",
@@ -381,13 +375,25 @@ export async function getPublishedTournament(
         name: player.name,
         isEnabled: player.isEnabled,
       })),
-      games: tournamentGames.map((game) => ({
-        id: game.id,
-        teams: [
-          { players: team1, score: game.team1Score },
-          { players: team2, score: game.team2Score },
-        ],
-      })),
+      games: tournamentGames.map((game) => {
+        const team1 = tournamentPlayers.filter(
+          (player) =>
+            player.id === game.team1Player1Id ||
+            player.id === game.team1Player2Id
+        );
+        const team2 = tournamentPlayers.filter(
+          (player) =>
+            player.id === game.team2Player1Id ||
+            player.id === game.team2Player2Id
+        );
+        return {
+          id: game.id,
+          teams: [
+            { players: team1, score: game.team1Score },
+            { players: team2, score: game.team2Score },
+          ],
+        };
+      }),
       admins: admins.map((admin) => ({
         id: admin.id ?? "",
         name: admin.name ?? "",
@@ -405,18 +411,33 @@ export async function getPublishedTournament(
   }
 }
 
-export async function deleteTournament(tournament: Tournament) {
+export async function deleteTournament(tournamentId: string) {
   try {
-    await db.delete(games).where(eq(games.tournamentId, tournament.id));
-    await db.delete(players).where(eq(players.tournamentId, tournament.id));
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return { success: false, error: "Unauthorized" };
+    }
+    const [tournament] = await db
+      .select()
+      .from(tournaments)
+      .where(eq(tournaments.id, tournamentId))
+      .limit(1);
+    if (!tournament) {
+      return { success: false, error: "Tournament not found" };
+    }
+    if (tournament.ownerId !== session.user.id) {
+      return { success: false, error: "Unauthorized" };
+    }
+    await db.delete(games).where(eq(games.tournamentId, tournamentId));
+    await db.delete(players).where(eq(players.tournamentId, tournamentId));
     await db
       .delete(tournamentAdmins)
-      .where(eq(tournamentAdmins.tournamentId, tournament.id));
+      .where(eq(tournamentAdmins.tournamentId, tournamentId));
     await db
       .delete(tournamentUsers)
-      .where(eq(tournamentUsers.tournamentId, tournament.id));
+      .where(eq(tournamentUsers.tournamentId, tournamentId));
 
-    await db.delete(tournaments).where(eq(tournaments.id, tournament.id));
+    await db.delete(tournaments).where(eq(tournaments.id, tournamentId));
 
     return { success: true };
   } catch (error) {

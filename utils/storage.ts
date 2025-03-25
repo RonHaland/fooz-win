@@ -10,6 +10,7 @@ export function saveTournament(tournament: Tournament) {
   if (typeof window === "undefined") return;
 
   const updatedPlayerMap = new Map<string, string>(); // map of old player id to new player id
+
   tournament = {
     ...tournament,
     players: tournament.players.map((player) => {

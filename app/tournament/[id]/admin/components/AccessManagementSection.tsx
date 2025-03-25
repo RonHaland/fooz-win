@@ -36,12 +36,29 @@ export function AccessManagementSection({
           />
         </div>
         <div className="flex flex-col gap-2">
+          {!!tournament.users.length && (
+            <span className="text-slate-400">
+              {tournament.users.length} user
+              {tournament.users.length > 1 ? "s" : ""}:
+            </span>
+          )}
           {tournament.users.map((u) => (
             <div key={u.id} className="flex justify-between">
               <span>{u.email}</span>
-              <button onClick={() => onDeleteUser(u.id)}>delete</button>
+              <button
+                onClick={() => onDeleteUser(u.id)}
+                className="text-red-400 hover:text-red-600 bg-slate-500/50 p-2 rounded-md hover:bg-slate-600/50"
+              >
+                <TrashIcon />
+              </button>
             </div>
           ))}
+          {!!tournament.admins.length && (
+            <span className="text-slate-400">
+              {tournament.admins.length} admin
+              {tournament.admins.length > 1 ? "s" : ""}:
+            </span>
+          )}
           {tournament.admins.map((u) => (
             <div key={u.id} className="flex justify-between items-center">
               <span>{u.email}</span>

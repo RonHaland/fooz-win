@@ -133,7 +133,7 @@ export default function TournamentAdminPage({
 
     setIsUnpublishing(true);
     try {
-      const result = await deleteTournament(tournament);
+      const result = await deleteTournament(tournament.id);
       if (!result.success) {
         setErrorMessage(result.error || "Failed to unpublish tournament");
         return;

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { getTournament, saveTournament } from "@/utils/storage";
 import { useEffect } from "react";
 import { getPublishedTournament, publishTournament } from "@/app/actions";
@@ -28,6 +28,10 @@ export function useTournament(id: string) {
           setIsOnline(false);
           return;
         }
+        if (!loadedTournament && !publishedTournament) {
+          router.replace("/");
+          return;
+        }
         setIsOnline(true);
         setTournament(publishedTournament);
         setIsAdmin(
@@ -49,22 +53,25 @@ export function useTournament(id: string) {
     tournament: Tournament,
     isOnline: boolean
   ) {
+    console.log("saving tournament", tournament);
     saveTournament(tournament);
     if (isOnline) {
       await publishTournament(tournament);
     }
   }
 
-  useEffect(() => {
-    async function save() {
-      if (tournament) {
-        await saveTournamentInternal(tournament, isOnline);
-      }
-    }
-    console.log("saving tournament", tournament);
-    save();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tournament]);
+  const setTournamentInternal = useCallback(
+    (tournament: Tournament) => {
+      setTournament(tournament);
+      saveTournamentInternal(tournament, isOnline);
+    },
+    [isOnline]
+  );
 
-  return { tournament, isOnline, isAdmin, setTournament };
+  return {
+    tournament,
+    isOnline,
+    isAdmin,
+    setTournament: setTournamentInternal,
+  };
 }
