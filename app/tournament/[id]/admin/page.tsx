@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState } from "react";
+import { useContext, useState } from "react";
 import { Tournament } from "@/types/game";
 import { saveTournament } from "@/utils/storage";
 import { ErrorModal } from "@/components/ErrorModal";
@@ -12,13 +12,10 @@ import {
 import { PlayerManagementSection } from "./components/PlayerManagementSection";
 import { TournamentSettingsSection } from "./components/TournamentSettingsSection";
 import { AccessManagementSection } from "./components/AccessManagementSection";
-import { useTournament } from "./hooks/useTournament";
 import { InfoModal } from "@/components/InfoModal";
-export default function TournamentAdminPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+import { TournamentContext } from "../TournamentContext";
+
+export default function TournamentAdminPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [infoMessage, setInfoMessage] = useState<string | null>(null);
   const [isPublishing, setIsPublishing] = useState(false);
@@ -28,9 +25,8 @@ export default function TournamentAdminPage({
     part?: "minutes" | "seconds";
     value: string;
   } | null>(null);
-  const { id } = use(params);
   const [newUserEmail, setNewUserEmail] = useState<string>("");
-  const { tournament, setTournament } = useTournament(id);
+  const { tournament, setTournament } = useContext(TournamentContext);
 
   const handleUpdateTournament = (updatedTournament: Tournament) => {
     updatedTournament.updatedAt = new Date().toISOString();

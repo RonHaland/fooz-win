@@ -9,7 +9,7 @@ import { useSession } from "next-auth/react";
 export function useTournament(id: string) {
   const [tournament, setTournament] = useState<Tournament | null>(null);
   const [isOnline, setIsOnline] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(true);
   const router = useRouter();
   const session = useSession();
 
@@ -63,6 +63,7 @@ export function useTournament(id: string) {
   const setTournamentInternal = useCallback(
     (tournament: Tournament) => {
       setTournament(tournament);
+      setIsOnline(tournament.isActive);
       saveTournamentInternal(tournament, isOnline);
     },
     [isOnline]

@@ -82,3 +82,16 @@ export const tournamentUsers = pgTable("tournament_users", {
     .references(() => users.id)
     .notNull(),
 });
+
+export const tournamentConfig = pgTable("tournament_config", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  tournamentId: uuid("tournament_id")
+    .references(() => tournaments.id)
+    .notNull(),
+  enableTimer: boolean("enable_timer").default(true).notNull(),
+  timerDuration: integer("timer_duration").notNull(),
+  enableOvertimer: boolean("enable_overtimer").default(true).notNull(),
+  overtimerDuration: integer("overtimer_duration").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});

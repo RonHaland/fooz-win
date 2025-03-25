@@ -2,7 +2,7 @@
 
 import { Tournament } from "@/types/game";
 import { PlayerStats } from "@/components/PlayerStats";
-
+import { gamesPlayed } from "@/utils/tournament";
 interface PlayerManagementSectionProps {
   tournament: Tournament;
   onUpdateTournament: (updatedTournament: Tournament) => void;
@@ -19,14 +19,7 @@ export function PlayerManagementSection({
       </div>
       <PlayerStats
         players={tournament.players}
-        gamesPlayed={tournament.games.reduce((acc, game) => {
-          game.teams.forEach((team) => {
-            team.players.forEach((player) => {
-              acc[player.id] = (acc[player.id] || 0) + 1;
-            });
-          });
-          return acc;
-        }, {} as Record<string, number>)}
+        gamesPlayed={gamesPlayed(tournament.games)}
         onToggleEnabled={(playerId: string) => {
           onUpdateTournament({
             ...tournament,

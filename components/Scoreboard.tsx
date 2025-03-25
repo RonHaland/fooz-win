@@ -1,6 +1,6 @@
 import { Game, Player } from "@/types/game";
 import { FootballIcon } from "./icons/FootballIcon";
-
+import { gamesPlayed } from "@/utils/tournament";
 type ScoreboardProps = {
   players: Player[];
   games: Game[];
@@ -52,6 +52,9 @@ export function Scoreboard({
                   <th className="text-right py-2 px-4 text-slate-400 font-medium">
                     Score
                   </th>
+                  <th className="text-center py-2 px-4 text-slate-400 font-medium sm:w-20">
+                    Games
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -93,22 +96,31 @@ export function Scoreboard({
                         {playerScores[player.id] || 0}
                       </span>
                     </td>
+                    <td className="py-3 px-4 text-center">
+                      <span className="text-slate-400">
+                        {gamesPlayed(games)[player.id] || 0}
+                      </span>
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           )}
-          {!players.length && isAdmin && (
+          {!players.length && (
             <div className="flex flex-col p-6 items-center">
-              <span>
-                Add players in the{" "}
-                <button
-                  className="inline-block text-emerald-400 hover:text-emerald-300 hover:underline underline-offset-3 hover:cursor-pointer"
-                  onClick={onClickAdminTab}
-                >
-                  Administration tab
-                </button>
-              </span>
+              {isAdmin ? (
+                <span>
+                  Add players in the{" "}
+                  <button
+                    className="inline-block text-emerald-400 hover:text-emerald-300 hover:underline underline-offset-3 hover:cursor-pointer"
+                    onClick={onClickAdminTab}
+                  >
+                    Administration tab
+                  </button>
+                </span>
+              ) : (
+                <span>No players added</span>
+              )}
             </div>
           )}
         </div>

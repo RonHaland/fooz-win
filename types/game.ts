@@ -42,3 +42,10 @@ export interface User {
   name: string;
   email: string;
 }
+
+export type TournamentShortInfo = {
+  id: string;
+  name: string;
+  isPublic: boolean;
+  createdAt: string;
+};

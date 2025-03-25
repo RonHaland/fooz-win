@@ -15,6 +15,13 @@
       "when": 1742810177462,
       "tag": "0001_tournament",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1742890638196,
+      "tag": "0002_tournament_config",
+      "breakpoints": true
     }
   ]
 }

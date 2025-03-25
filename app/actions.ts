@@ -9,11 +9,12 @@ import {
   users,
   tournamentAdmins,
   tournamentUsers,
+  tournamentConfig,
 } from "@/db/schema";
-import { and, eq, or } from "drizzle-orm";
+import { and, eq, or, desc } from "drizzle-orm";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/auth";
-import { Tournament } from "@/types/game";
+import { Tournament, TournamentShortInfo } from "@/types/game";
 import { isUUID } from "@/utils/storage";
 
 type PublishResult = {
@@ -70,6 +71,7 @@ export async function publishTournament(
       .where(eq(tournaments.id, tournament.id))
       .limit(1);
 
+    //#region EXISTING TOURNAMENT
     if (existingTournament.length > 0) {
       if (existingTournament[0].ownerId !== session.user.id) {
         return { success: false, error: "Unauthorized" };
@@ -84,6 +86,17 @@ export async function publishTournament(
           updatedAt: new Date(),
         })
         .where(eq(tournaments.id, tournament.id));
+
+      await db
+        .update(tournamentConfig)
+        .set({
+          enableTimer: tournament.config?.enableTimer ?? true,
+          timerDuration: tournament.config?.timerDuration ?? 360,
+          enableOvertimer: tournament.config?.enableOvertimer ?? true,
+          overtimerDuration: tournament.config?.overtimerDuration ?? 120,
+          updatedAt: new Date(),
+        })
+        .where(eq(tournamentConfig.tournamentId, tournament.id));
 
       const existingGames = await db
         .select()
@@ -172,6 +185,14 @@ export async function publishTournament(
           });
         }
       }
+      for (const existingAdmin of existingAdmins) {
+        if (!tournament.admins.find((a) => a.id === existingAdmin.userId)) {
+          await db
+            .delete(tournamentAdmins)
+            .where(eq(tournamentAdmins.id, existingAdmin.id));
+        }
+      }
+
       const existingUsers = await db
         .select()
         .from(tournamentUsers)
@@ -194,10 +215,17 @@ export async function publishTournament(
           });
         }
       }
+      for (const existingUser of existingUsers) {
+        if (!tournament.users.find((u) => u.id === existingUser.userId)) {
+          await db
+            .delete(tournamentUsers)
+            .where(eq(tournamentUsers.id, existingUser.id));
+        }
+      }
       return { success: true };
     }
-
-    // Insert new tournament
+    //#endregion
+    //#region NEW TOURNAMENT
     await db.insert(tournaments).values({
       id: tournament.id,
       name: tournament.name,
@@ -205,6 +233,16 @@ export async function publishTournament(
       ownerId: session.user.id,
       isActive: true,
       isPublic: tournament.isPublic,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    await db.insert(tournamentConfig).values({
+      tournamentId: tournament.id,
+      enableTimer: tournament.config?.enableTimer ?? true,
+      timerDuration: tournament.config?.timerDuration ?? 360,
+      enableOvertimer: tournament.config?.enableOvertimer ?? true,
+      overtimerDuration: tournament.config?.overtimerDuration ?? 120,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
@@ -279,6 +317,7 @@ export async function publishTournament(
     }
 
     return { success: true };
+    //#endregion
   } catch (error) {
     console.error("Error publishing tournament:", error);
     return { success: false, error: "Failed to publish tournament" };
@@ -300,6 +339,7 @@ export async function getPublishedTournament(
         ownerId: tournaments.ownerId,
         createdAt: tournaments.createdAt,
         updatedAt: tournaments.updatedAt,
+        config: tournamentConfig,
       })
       .from(tournaments)
       .leftJoin(
@@ -309,6 +349,10 @@ export async function getPublishedTournament(
       .leftJoin(
         tournamentUsers,
         eq(tournamentUsers.tournamentId, tournaments.id)
+      )
+      .leftJoin(
+        tournamentConfig,
+        eq(tournamentConfig.tournamentId, tournaments.id)
       )
       .where(
         and(
@@ -368,6 +412,7 @@ export async function getPublishedTournament(
     return {
       ...tournament,
       ownerId: tournament.ownerId ?? "",
+      config: tournament.config ?? undefined,
       createdAt: tournament.createdAt.toISOString(),
       updatedAt: tournament.updatedAt.toISOString(),
       players: tournamentPlayers.map((player) => ({
@@ -428,6 +473,7 @@ export async function deleteTournament(tournamentId: string) {
     if (tournament.ownerId !== session.user.id) {
       return { success: false, error: "Unauthorized" };
     }
+
     await db.delete(games).where(eq(games.tournamentId, tournamentId));
     await db.delete(players).where(eq(players.tournamentId, tournamentId));
     await db
@@ -437,11 +483,41 @@ export async function deleteTournament(tournamentId: string) {
       .delete(tournamentUsers)
       .where(eq(tournamentUsers.tournamentId, tournamentId));
 
+    await db
+      .delete(tournamentConfig)
+      .where(eq(tournamentConfig.tournamentId, tournamentId));
+
     await db.delete(tournaments).where(eq(tournaments.id, tournamentId));
 
     return { success: true };
   } catch (error) {
     console.error("Error deleting tournament:", error);
     return { success: false, error: "Failed to delete tournament" };
+  }
+}
+
+export async function getPublishedTournaments(): Promise<
+  TournamentShortInfo[]
+> {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return [];
+    }
+    const publishedTournaments = await db
+      .select()
+      .from(tournaments)
+      .where(eq(tournaments.ownerId, session.user.id))
+      .orderBy(desc(tournaments.createdAt));
+
+    return publishedTournaments.map((tournament) => ({
+      id: tournament.id,
+      name: tournament.name,
+      isPublic: tournament.isPublic,
+      createdAt: tournament.createdAt.toISOString(),
+    }));
+  } catch (error) {
+    console.error("Error fetching tournaments:", error);
+    return [];
   }
 }

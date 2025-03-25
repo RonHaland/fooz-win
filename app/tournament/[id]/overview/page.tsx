@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, use } from "react";
+import { useState, use, useContext } from "react";
 import { useRouter } from "next/navigation";
 import { Tournament, Player } from "@/types/game";
 import { Scoreboard } from "@/components/Scoreboard";
@@ -9,7 +9,8 @@ import { GamesContainer } from "@/components/GamesContainer";
 import { PlusIcon } from "@/components/icons/PlusIcon";
 import { ErrorModal } from "@/components/ErrorModal";
 import { unstable_ViewTransition as ViewTransition } from "react";
-import { useTournament } from "../admin/hooks/useTournament";
+import { TournamentContext } from "../TournamentContext";
+
 export default function TournamentOverviewPage({
   params,
 }: {
@@ -18,7 +19,7 @@ export default function TournamentOverviewPage({
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { id } = use(params);
-  const { tournament, setTournament, isAdmin } = useTournament(id);
+  const { tournament, setTournament, isAdmin } = useContext(TournamentContext);
 
   const handleUpdateTournament = (updatedTournament: Tournament) => {
     updatedTournament.updatedAt = new Date().toISOString();
