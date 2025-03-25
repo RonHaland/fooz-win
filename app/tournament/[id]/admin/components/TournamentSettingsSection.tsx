@@ -2,7 +2,7 @@
 
 import { Tournament } from "@/types/game";
 import { Dispatch, SetStateAction } from "react";
-
+import { useSession } from "next-auth/react";
 interface TournamentSettingsSectionProps {
   tournament: Tournament;
   isPublishing: boolean;
@@ -61,28 +61,35 @@ export function TournamentSettingsSection({
     );
   };
 
+  const session = useSession();
+  const isLoggedIn = session.status === "authenticated";
+
   return (
     <section className="bg-slate-800/50 rounded-xl border border-slate-700/50">
       <div className="p-6 w-full bg-gradient-to-r from-emerald-600/20 to-blue-500/20 rounded-t-xl flex justify-between items-center">
         <h2 className="text-2xl font-bold text-white">Tournament Settings</h2>
-        {!tournament.isActive ? (
-          <button
-            onClick={onPublish}
-            disabled={isPublishing}
-            className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 
+        {isLoggedIn && (
+          <>
+            {!tournament.isActive ? (
+              <button
+                onClick={onPublish}
+                disabled={isPublishing}
+                className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 
                      transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isPublishing ? "Publishing..." : "Publish Tournament"}
-          </button>
-        ) : (
-          <button
-            onClick={onUnpublish}
-            disabled={isUnpublishing}
-            className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 
+              >
+                {isPublishing ? "Publishing..." : "Publish Tournament"}
+              </button>
+            ) : (
+              <button
+                onClick={onUnpublish}
+                disabled={isUnpublishing}
+                className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 
                      transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isUnpublishing ? "Unpublishing..." : "Unpublish Tournament"}
-          </button>
+              >
+                {isUnpublishing ? "Unpublishing..." : "Unpublish Tournament"}
+              </button>
+            )}
+          </>
         )}
       </div>
       <div className="p-6 space-y-4">

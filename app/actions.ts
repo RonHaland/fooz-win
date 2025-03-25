@@ -11,7 +11,7 @@ import {
   tournamentUsers,
   tournamentConfig,
 } from "@/db/schema";
-import { and, eq, or, desc } from "drizzle-orm";
+import { and, eq, or, desc, sql } from "drizzle-orm";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/auth";
 import { Tournament, TournamentShortInfo } from "@/types/game";
@@ -519,5 +519,49 @@ export async function getPublishedTournaments(): Promise<
   } catch (error) {
     console.error("Error fetching tournaments:", error);
     return [];
+  }
+}
+
+export async function getPublicTournaments(
+  page: number = 1,
+  limit: number = 10
+): Promise<{
+  tournaments: TournamentShortInfo[];
+  totalPages: number;
+}> {
+  try {
+    const offset = (page - 1) * limit;
+
+    const [total] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(tournaments)
+      .where(eq(tournaments.isPublic, true));
+
+    const publicTournaments = await db
+      .select({
+        id: tournaments.id,
+        name: tournaments.name,
+        createdAt: tournaments.createdAt,
+        ownerId: tournaments.ownerId,
+        ownerName: users.name,
+      })
+      .from(tournaments)
+      .leftJoin(users, eq(tournaments.ownerId, users.id))
+      .where(eq(tournaments.isPublic, true))
+      .orderBy(desc(tournaments.createdAt))
+      .limit(limit)
+      .offset(offset);
+
+    return {
+      tournaments: publicTournaments.map((t) => ({
+        ...t,
+        createdAt: t.createdAt.toISOString(),
+        ownerName: t.ownerName ?? "",
+      })),
+      totalPages: Math.ceil(total.count / limit),
+    };
+  } catch (error) {
+    console.error("Error fetching public tournaments:", error);
+    return { tournaments: [], totalPages: 1 };
   }
 }
