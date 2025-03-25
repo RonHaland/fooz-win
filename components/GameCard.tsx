@@ -11,6 +11,7 @@ type GameCardProps = {
   onDelete: () => void;
   onScoreChange: (teamIndex: number, newScore: number) => void;
   players: Player[];
+  isAdmin?: boolean;
 };
 
 export function GameCard({
@@ -19,25 +20,30 @@ export function GameCard({
   onDelete,
   onScoreChange,
   players,
+  isAdmin = false,
 }: GameCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Helper function to get current player name
-  const getPlayerName = (playerId: number) => {
+  const getPlayerName = (playerId: string) => {
     return players.find((p) => p.id === playerId)?.name || "Unknown Player";
   };
 
   return (
-    <article className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-4 flex flex-col gap-3 shadow-lg hover:shadow-xl transition-shadow border border-white/10">
+    <article
+      className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-4 flex flex-col 
+            gap-3 shadow-lg hover:shadow-xl transition-shadow border border-white/10"
+    >
       <h2 className="text-2xl font-bold text-white border-b border-slate-700 pb-1 px-2 flex justify-between items-center">
         <span>Game {index + 1}</span>
-        <button
-          onClick={onDelete}
-          className="text-slate-400 hover:text-red-400 transition-colors"
-          aria-label={`Delete Game ${index + 1}`}
-        >
-          <TrashIcon />
-        </button>
+        {isAdmin && (
+          <button
+            onClick={onDelete}
+            className="text-slate-400 hover:text-red-400 transition-colors"
+            aria-label={`Delete Game ${index + 1}`}
+          >
+            <TrashIcon />
+          </button>
+        )}
       </h2>
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-4">
@@ -59,19 +65,21 @@ export function GameCard({
                   Team {i + 1}
                 </h3>
                 <div className="flex items-center gap-2">
-                  <button
-                    onClick={() =>
-                      onScoreChange(i, team.score > 0 ? team.score - 1 : 10)
-                    }
-                    className={`w-8 h-8 flex items-center justify-center rounded-lg ${
-                      i === 0
-                        ? "bg-blue-500/20 text-blue-300 hover:bg-blue-500/30"
-                        : "bg-amber-500/20 text-amber-300 hover:bg-amber-500/30"
-                    } transition-colors`}
-                    aria-label="Decrease score"
-                  >
-                    -
-                  </button>
+                  {isAdmin && (
+                    <button
+                      onClick={() =>
+                        onScoreChange(i, team.score > 0 ? team.score - 1 : 10)
+                      }
+                      className={`w-8 h-8 flex items-center justify-center rounded-lg ${
+                        i === 0
+                          ? "bg-blue-500/20 text-blue-300 hover:bg-blue-500/30"
+                          : "bg-amber-500/20 text-amber-300 hover:bg-amber-500/30"
+                      } transition-colors`}
+                      aria-label="Decrease score"
+                    >
+                      -
+                    </button>
+                  )}
                   <div className="flex items-center gap-1">
                     <FootballIcon
                       className={`h-4 w-4 ${
@@ -86,19 +94,21 @@ export function GameCard({
                       {team.score}
                     </span>
                   </div>
-                  <button
-                    onClick={() =>
-                      onScoreChange(i, team.score < 10 ? team.score + 1 : 0)
-                    }
-                    className={`w-8 h-8 flex items-center justify-center rounded-lg ${
-                      i === 0
-                        ? "bg-blue-500/20 text-blue-300 hover:bg-blue-500/30"
-                        : "bg-amber-500/20 text-amber-300 hover:bg-amber-500/30"
-                    } transition-colors`}
-                    aria-label="Increase score"
-                  >
-                    +
-                  </button>
+                  {isAdmin && (
+                    <button
+                      onClick={() =>
+                        onScoreChange(i, team.score < 10 ? team.score + 1 : 0)
+                      }
+                      className={`w-8 h-8 flex items-center justify-center rounded-lg ${
+                        i === 0
+                          ? "bg-blue-500/20 text-blue-300 hover:bg-blue-500/30"
+                          : "bg-amber-500/20 text-amber-300 hover:bg-amber-500/30"
+                      } transition-colors`}
+                      aria-label="Increase score"
+                    >
+                      +
+                    </button>
+                  )}
                 </div>
               </div>
               <div className="grid grid-cols-[1fr_15px_1fr] gap-2">

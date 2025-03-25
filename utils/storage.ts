@@ -8,6 +8,29 @@ export function getTournamentKey(id: string) {
 
 export function saveTournament(tournament: Tournament) {
   if (typeof window === "undefined") return;
+
+  const updatedPlayerMap = new Map<string, string>(); // map of old player id to new player id
+
+  tournament = {
+    ...tournament,
+    players: tournament.players.map((player) => {
+      const existingId = player.id;
+      player.id = isUUID(player.id) ? player.id : crypto.randomUUID();
+      updatedPlayerMap.set(existingId, player.id);
+      return player;
+    }),
+    games: tournament.games.map((game) => {
+      game.teams = game.teams.map((team) => {
+        team.players = team.players.map((player) => {
+          player.id = updatedPlayerMap.get(player.id) ?? player.id;
+          return player;
+        });
+        return team;
+      });
+      return game;
+    }),
+  };
+
   localStorage.setItem(
     getTournamentKey(tournament.id),
     JSON.stringify(tournament)
@@ -32,10 +55,11 @@ export function getAllTournaments(): Tournament[] {
     );
 }
 
-export function createTournament(name: string): Tournament {
+export function createTournament(name: string, ownerId?: string): Tournament {
   const tournament: Tournament = {
     id: crypto.randomUUID(),
     name,
+    ownerId: ownerId,
     players: [],
     games: [],
     createdAt: new Date().toISOString(),
@@ -46,6 +70,10 @@ export function createTournament(name: string): Tournament {
       enableOvertimer: true,
       overtimerDuration: 120,
     },
+    users: [],
+    admins: [],
+    isActive: false,
+    isPublic: false,
   };
   saveTournament(tournament);
   return tournament;
@@ -54,4 +82,10 @@ export function createTournament(name: string): Tournament {
 export function deleteTournament(id: string) {
   if (typeof window === "undefined") return;
   localStorage.removeItem(getTournamentKey(id));
+}
+
+export function isUUID(str: string): boolean {
+  const uuidRegex =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(str);
 }

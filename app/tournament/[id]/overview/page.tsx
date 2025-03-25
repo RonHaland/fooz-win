@@ -1,14 +1,15 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
+import { useState, use, useContext } from "react";
 import { useRouter } from "next/navigation";
 import { Tournament, Player } from "@/types/game";
-import { getTournament, saveTournament } from "@/utils/storage";
 import { Scoreboard } from "@/components/Scoreboard";
 import { CountdownTimer } from "@/components/CountdownTimer";
 import { GamesContainer } from "@/components/GamesContainer";
 import { PlusIcon } from "@/components/icons/PlusIcon";
 import { ErrorModal } from "@/components/ErrorModal";
+import { unstable_ViewTransition as ViewTransition } from "react";
+import { TournamentContext } from "../TournamentContext";
 
 export default function TournamentOverviewPage({
   params,
@@ -16,22 +17,12 @@ export default function TournamentOverviewPage({
   params: Promise<{ id: string }>;
 }) {
   const router = useRouter();
-  const [tournament, setTournament] = useState<Tournament | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { id } = use(params);
-
-  useEffect(() => {
-    const loadedTournament = getTournament(id);
-    if (!loadedTournament) {
-      router.push("/");
-      return;
-    }
-    setTournament(loadedTournament);
-  }, [id, router]);
+  const { tournament, setTournament, isAdmin } = useContext(TournamentContext);
 
   const handleUpdateTournament = (updatedTournament: Tournament) => {
     updatedTournament.updatedAt = new Date().toISOString();
-    saveTournament(updatedTournament);
     setTournament(updatedTournament);
   };
 
@@ -60,7 +51,7 @@ export default function TournamentOverviewPage({
         return count + (isPlaying ? 1 : 0);
       }, 0);
       return acc;
-    }, {} as Record<number, number>);
+    }, {} as Record<string, number>);
 
     const minGames = Math.min(...enabledPlayers.map((p) => gamesPlayed[p.id]));
 
@@ -101,6 +92,7 @@ export default function TournamentOverviewPage({
     const team2 = shuffled.slice(2, 4);
 
     const newGame = {
+      id: crypto.randomUUID(),
       teams: [
         { players: team1, score: 0 },
         { players: team2, score: 0 },
@@ -117,45 +109,51 @@ export default function TournamentOverviewPage({
   if (!tournament) return null;
 
   return (
-    <div className="space-y-8">
-      <section className="bg-slate-800/50 rounded-xl border border-slate-700/50 overflow-hidden">
-        <Scoreboard
-          players={tournament.players}
-          games={tournament.games}
-          onClickAdminTab={handleAdminTabClick}
-        />
-      </section>
-
-      {tournament.config?.enableTimer && (
-        <section className="space-y-6">
-          <CountdownTimer tournament={tournament} />
+    <ViewTransition>
+      <div className="space-y-8">
+        <section className="bg-slate-800/50 rounded-xl border border-slate-700/50 overflow-hidden">
+          <Scoreboard
+            players={tournament.players}
+            games={tournament.games}
+            onClickAdminTab={handleAdminTabClick}
+            isAdmin={isAdmin}
+          />
         </section>
-      )}
 
-      <section className="space-y-6">
-        <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold text-white">Games</h2>
-          <button
-            onClick={addNewGame}
-            className="bg-emerald-700 hover:bg-emerald-600 text-white font-semibold px-6 py-3 
+        {tournament.config?.enableTimer && (
+          <section className="space-y-6">
+            <CountdownTimer tournament={tournament} />
+          </section>
+        )}
+
+        <section className="space-y-6">
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-bold text-white">Games</h2>
+            {isAdmin && (
+              <button
+                onClick={addNewGame}
+                className="bg-emerald-700 hover:bg-emerald-600 text-white font-semibold px-6 py-3 
                       rounded-xl transition-all duration-200 transform hover:scale-105 flex items-center 
                       gap-2 hover:shadow-lg shadow-emerald-800/40 hover:cursor-pointer"
-          >
-            <PlusIcon className="h-5 w-5" />
-            Add Game
-          </button>
-        </div>
-        <GamesContainer
-          tournament={tournament}
-          onUpdate={handleUpdateTournament}
-        />
-      </section>
+              >
+                <PlusIcon className="h-5 w-5" />
+                Add Game
+              </button>
+            )}
+          </div>
+          <GamesContainer
+            tournament={tournament}
+            onUpdate={handleUpdateTournament}
+            isAdmin={isAdmin}
+          />
+        </section>
 
-      <ErrorModal
-        isOpen={errorMessage !== null}
-        onClose={() => setErrorMessage(null)}
-        message={errorMessage || ""}
-      />
-    </div>
+        <ErrorModal
+          isOpen={errorMessage !== null}
+          onClose={() => setErrorMessage(null)}
+          message={errorMessage || ""}
+        />
+      </div>
+    </ViewTransition>
   );
 }

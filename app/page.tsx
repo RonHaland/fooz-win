@@ -14,6 +14,7 @@ import { ConfirmModal } from "@/components/ConfirmModal";
 import { InfoSection } from "@/components/InfoSection";
 import { NewTournamentModal } from "@/components/NewTournamentModal";
 import { FootballIcon } from "@/components/icons/FootballIcon";
+import { useSession } from "next-auth/react";
 
 export default function Home() {
   const [tournaments, setTournaments] = useState<Tournament[]>([]);
@@ -21,6 +22,7 @@ export default function Home() {
   const [deleteConfirmation, setDeleteConfirmation] = useState<string | null>(
     null
   );
+  const session = useSession();
 
   useEffect(() => {
     setTournaments(getAllTournaments());
@@ -28,7 +30,7 @@ export default function Home() {
 
   const handleCreateTournament = (name: string) => {
     if (!name.trim()) return;
-    const tournament = createTournament(name.trim());
+    const tournament = createTournament(name.trim(), session.data?.user?.id);
     setTournaments([tournament, ...tournaments]);
     setShowNewTournamentModal(false);
   };
@@ -40,7 +42,7 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800">
+    <main className="bg-gradient-to-b from-slate-900 to-slate-800">
       <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="text-center mb-12 flex flex-col items-center">

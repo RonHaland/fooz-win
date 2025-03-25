@@ -46,6 +46,14 @@ export function InfoSection() {
               Toggle the switch next to a player&apos;s name to include/exclude
               them from games.
             </p>
+            <p>
+              <span className="font-medium text-emerald-400">
+                Publish Tournament:
+              </span>{" "}
+              Click &quot;Publish Tournament&quot; in the admin panel to save
+              your tournament online. You can make it public or private, and
+              manage access for other users.
+            </p>
           </div>
         </div>
 
@@ -53,16 +61,34 @@ export function InfoSection() {
           <h2 className="text-lg font-semibold text-white mb-3">
             Data Storage
           </h2>
-          <p className="text-sm text-slate-300">
-            All tournament data is stored locally in your browser using
-            localStorage. This means:
+          <p className="text-sm text-slate-300 mb-4">
+            Tournament data can be stored in two ways:
           </p>
-          <ul className="mt-2 text-sm text-slate-300 list-disc list-inside space-y-1">
-            <li>Your data persists between sessions</li>
-            <li>Data is private and only accessible on your device</li>
-            <li>Clearing browser data will remove your tournaments</li>
-            <li>Data is not synced between devices</li>
-          </ul>
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-sm font-medium text-emerald-400 mb-2">
+                Local Storage
+              </h3>
+              <ul className="text-sm text-slate-300 list-disc list-inside space-y-1">
+                <li>Data persists between sessions</li>
+                <li>Only accessible on your device</li>
+                <li>Clearing browser data will remove tournaments</li>
+                <li>No sharing capabilities</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-emerald-400 mb-2">
+                Published Tournaments
+              </h3>
+              <ul className="text-sm text-slate-300 list-disc list-inside space-y-1">
+                <li>Stored securely in the cloud</li>
+                <li>Accessible from any device</li>
+                <li>Can be shared with other users</li>
+                <li>Set visibility to public or private</li>
+                <li>Manage access permissions for other users</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>

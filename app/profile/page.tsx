@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { ErrorModal } from "@/components/ErrorModal";
+import { getPublishedTournaments } from "@/app/actions";
+import { PublishedTournamentsSection } from "./components/PublishedTournamentsSection";
+import { TournamentShortInfo } from "@/types/game";
 
 export default function ProfilePage() {
   const { data: session, status } = useSession();
@@ -11,6 +14,7 @@ export default function ProfilePage() {
   const [name, setName] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [tournaments, setTournaments] = useState<TournamentShortInfo[]>([]);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -19,7 +23,19 @@ export default function ProfilePage() {
     if (session?.user?.name) {
       setName(session.user.name);
     }
+    if (session?.user?.id) {
+      fetchPublishedTournaments();
+    }
   }, [session, status, router]);
+
+  const fetchPublishedTournaments = async () => {
+    try {
+      const response = await getPublishedTournaments();
+      setTournaments(response);
+    } catch (error) {
+      console.error("Failed to fetch tournaments:", error);
+    }
+  };
 
   const handleUpdateName = async () => {
     if (!name.trim()) {
@@ -69,7 +85,7 @@ export default function ProfilePage() {
 
   return (
     <div className="py-2 sm:py-12 px-2 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-3xl mx-auto space-y-8">
         <div className="bg-slate-800/50 rounded-xl border border-slate-700/50 overflow-hidden">
           <div className="px-2 py-4 sm:p-6 w-full bg-gradient-to-r from-emerald-600/20 to-blue-500/20">
             <h1 className="text-2xl font-bold text-white">Profile</h1>
@@ -124,6 +140,8 @@ export default function ProfilePage() {
             </div>
           </div>
         </div>
+
+        <PublishedTournamentsSection tournaments={tournaments} />
       </div>
 
       <ErrorModal

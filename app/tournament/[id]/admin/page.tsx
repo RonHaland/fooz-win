@@ -1,35 +1,32 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
-import { useRouter } from "next/navigation";
+import { useContext, useState } from "react";
 import { Tournament } from "@/types/game";
-import { getTournament, saveTournament } from "@/utils/storage";
-import { PlayerStats } from "@/components/PlayerStats";
+import { saveTournament } from "@/utils/storage";
 import { ErrorModal } from "@/components/ErrorModal";
+import {
+  deleteTournament,
+  findUserByEmail,
+  publishTournament,
+} from "@/app/actions";
+import { PlayerManagementSection } from "./components/PlayerManagementSection";
+import { TournamentSettingsSection } from "./components/TournamentSettingsSection";
+import { AccessManagementSection } from "./components/AccessManagementSection";
+import { InfoModal } from "@/components/InfoModal";
+import { TournamentContext } from "../TournamentContext";
 
-export default function TournamentAdminPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const router = useRouter();
-  const [tournament, setTournament] = useState<Tournament | null>(null);
+export default function TournamentAdminPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [infoMessage, setInfoMessage] = useState<string | null>(null);
+  const [isPublishing, setIsPublishing] = useState(false);
+  const [isUnpublishing, setIsUnpublishing] = useState(false);
   const [editingField, setEditingField] = useState<{
     type: "timer" | "overtimer" | "name";
     part?: "minutes" | "seconds";
     value: string;
   } | null>(null);
-  const { id } = use(params);
-
-  useEffect(() => {
-    const loadedTournament = getTournament(id);
-    if (!loadedTournament) {
-      router.push("/");
-      return;
-    }
-    setTournament(loadedTournament);
-  }, [id, router]);
+  const [newUserEmail, setNewUserEmail] = useState<string>("");
+  const { tournament, setTournament } = useContext(TournamentContext);
 
   const handleUpdateTournament = (updatedTournament: Tournament) => {
     updatedTournament.updatedAt = new Date().toISOString();
@@ -100,315 +97,161 @@ export default function TournamentAdminPage({
     }
   };
 
+  const handlePublish = async () => {
+    if (!tournament) return;
+
+    setIsPublishing(true);
+    try {
+      const result = await publishTournament(tournament);
+      if (!result.success) {
+        setErrorMessage(result.error || "Failed to publish tournament");
+        return;
+      }
+
+      // Update local tournament state
+      handleUpdateTournament({
+        ...tournament,
+        isActive: true,
+      });
+
+      // Show success message
+      setInfoMessage("Tournament published successfully!");
+      setTimeout(() => setInfoMessage(null), 3000);
+    } catch {
+      setErrorMessage("Failed to publish tournament");
+    } finally {
+      setIsPublishing(false);
+    }
+  };
+
+  const handleUnpublish = async () => {
+    if (!tournament) return;
+
+    setIsUnpublishing(true);
+    try {
+      const result = await deleteTournament(tournament.id);
+      if (!result.success) {
+        setErrorMessage(result.error || "Failed to unpublish tournament");
+        return;
+      }
+
+      // Update local tournament state
+      handleUpdateTournament({
+        ...tournament,
+        isActive: false,
+      });
+
+      setInfoMessage("Tournament unpublished successfully!");
+      setTimeout(() => setInfoMessage(null), 3000);
+    } catch {
+      setErrorMessage("Failed to unpublish tournament");
+    } finally {
+      setIsUnpublishing(false);
+    }
+  };
+
+  const handleAddUserByEmail = async (isAdmin: boolean) => {
+    if (!tournament) return;
+
+    if (!newUserEmail.trim()) {
+      setErrorMessage("Email address is required.");
+      return;
+    }
+
+    try {
+      const userExists = await findUserByEmail(newUserEmail);
+      if (!userExists?.email?.length) {
+        setErrorMessage("User not found in the database.");
+        return;
+      }
+
+      if (
+        tournament.users.some((u) => u.id === userExists.id) ||
+        tournament.admins.some((a) => a.id === userExists.id)
+      ) {
+        setErrorMessage("User already added");
+        return;
+      }
+
+      const newUser = {
+        id: userExists.id,
+        name: userExists.name,
+        email: userExists.email,
+      };
+
+      const updatedTournament = {
+        ...tournament,
+        users: [...(tournament.users ?? []), ...(!isAdmin ? [newUser] : [])],
+        admins: [...(tournament.admins ?? []), ...(isAdmin ? [newUser] : [])],
+      };
+      handleUpdateTournament(updatedTournament);
+
+      setNewUserEmail("");
+    } catch (error) {
+      setErrorMessage("Error checking user in the database.\r\n" + error);
+    }
+  };
+  const handleDelete = (userId: string) => {
+    if (!tournament) return;
+
+    const updatedTournament = {
+      ...tournament,
+      users: [...(tournament.users ?? []).filter((u) => u.id !== userId)],
+      admins: [...(tournament.admins ?? []).filter((u) => u.id !== userId)],
+    };
+    handleUpdateTournament(updatedTournament);
+  };
+
+  const handleTogglePublic = (isPublic: boolean) => {
+    if (!tournament) return;
+    handleUpdateTournament({
+      ...tournament,
+      isPublic,
+    });
+  };
+
   if (!tournament) return null;
 
   return (
     <div className="space-y-8">
-      <section className="bg-slate-800/50 rounded-xl border border-slate-700/50">
-        <div className="p-6 w-full bg-gradient-to-r from-emerald-600/20 to-blue-500/20 rounded-t-xl">
-          <h2 className="text-2xl font-bold text-white">Player Management</h2>
-        </div>
-        <PlayerStats
-          players={tournament.players}
-          gamesPlayed={tournament.games.reduce((acc, game) => {
-            // Count players in teams
-            game.teams.forEach((team) => {
-              team.players.forEach((player) => {
-                acc[player.id] = (acc[player.id] || 0) + 1;
-              });
-            });
-            return acc;
-          }, {} as Record<number, number>)}
-          onToggleEnabled={(playerId: number) => {
-            handleUpdateTournament({
-              ...tournament,
-              players: tournament.players.map((player) =>
-                player.id === playerId
-                  ? { ...player, isEnabled: !player.isEnabled }
-                  : player
-              ),
-            });
-          }}
-          onRenamePlayer={(playerId: number, newName: string) => {
-            handleUpdateTournament({
-              ...tournament,
-              players: tournament.players.map((player) =>
-                player.id === playerId ? { ...player, name: newName } : player
-              ),
-            });
-          }}
-          onAddPlayer={(name: string) => {
-            const newPlayer = {
-              id: Math.max(...tournament.players.map((p) => p.id), 0) + 1,
-              name,
-              isEnabled: true,
-            };
-            handleUpdateTournament({
-              ...tournament,
-              players: [...tournament.players, newPlayer],
-            });
-          }}
-          onDeletePlayer={(playerId: number) => {
-            const gamesPlayed = tournament.games.reduce((count, game) => {
-              return (
-                count +
-                (game.teams.some((team) =>
-                  team.players.some((p) => p.id === playerId)
-                )
-                  ? 1
-                  : 0)
-              );
-            }, 0);
+      <PlayerManagementSection
+        tournament={tournament}
+        onUpdateTournament={handleUpdateTournament}
+      />
 
-            if (gamesPlayed > 0) {
-              setErrorMessage("Cannot delete player who has played games");
-              return;
-            }
+      <TournamentSettingsSection
+        tournament={tournament}
+        isPublishing={isPublishing}
+        isUnpublishing={isUnpublishing}
+        editingField={editingField}
+        onUpdateTournament={handleUpdateTournament}
+        onPublish={handlePublish}
+        onUnpublish={handleUnpublish}
+        onEditStart={handleEditStart}
+        onEditComplete={handleEditComplete}
+        onKeyDown={handleKeyDown}
+        setEditingField={setEditingField}
+      />
 
-            handleUpdateTournament({
-              ...tournament,
-              players: tournament.players.filter((p) => p.id !== playerId),
-            });
-          }}
-        />
-      </section>
-      <section className="bg-slate-800/50 rounded-xl border border-slate-700/50">
-        <div className="p-6 w-full bg-gradient-to-r from-emerald-600/20 to-blue-500/20 rounded-t-xl">
-          <h2 className="text-2xl font-bold text-white">Tournament Settings</h2>
-        </div>
-        <div className="p-6 space-y-4">
-          <div className="flex items-center justify-between">
-            <label className="text-white font-medium">Tournament Name</label>
-            <div className="flex items-center gap-2">
-              {editingField?.type === "name" ? (
-                <input
-                  type="text"
-                  value={editingField.value}
-                  onChange={(e) =>
-                    setEditingField((prev) =>
-                      prev ? { ...prev, value: e.target.value } : null
-                    )
-                  }
-                  onBlur={() => {
-                    if (editingField?.value.trim()) {
-                      handleUpdateTournament({
-                        ...tournament,
-                        name: editingField.value.trim(),
-                      });
-                    }
-                    setEditingField(null);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && editingField?.value.trim()) {
-                      handleUpdateTournament({
-                        ...tournament,
-                        name: editingField.value.trim(),
-                      });
-                      setEditingField(null);
-                    }
-                  }}
-                  className="bg-slate-700 text-white rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  autoFocus
-                />
-              ) : (
-                <div
-                  className="flex items-center gap-1 cursor-pointer hover:bg-slate-700/50 px-3 py-1 rounded transition-colors"
-                  onClick={() =>
-                    setEditingField({ type: "name", value: tournament.name })
-                  }
-                >
-                  <span className="text-white">{tournament.name}</span>
-                </div>
-              )}
-            </div>
-          </div>
-          <div className="flex items-center justify-between">
-            <label className="text-white font-medium">Enable Timer</label>
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={tournament.config?.enableTimer}
-                onChange={(e) => {
-                  handleUpdateTournament({
-                    ...tournament,
-                    config: {
-                      ...tournament.config!,
-                      enableTimer: e.target.checked,
-                    },
-                  });
-                }}
-                className="w-5 h-5 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 checked:bg-emerald-600"
-              />
-              <div className="flex items-center gap-1">
-                <div
-                  className="flex items-center gap-1 cursor-pointer hover:bg-slate-700/50 px-3 py-1 rounded transition-colors"
-                  onClick={() => handleEditStart("timer", "minutes")}
-                >
-                  {editingField?.type === "timer" &&
-                  editingField?.part === "minutes" ? (
-                    <input
-                      type="number"
-                      value={editingField.value}
-                      onChange={(e) =>
-                        setEditingField((prev) =>
-                          prev ? { ...prev, value: e.target.value } : null
-                        )
-                      }
-                      onBlur={handleEditComplete}
-                      onKeyDown={handleKeyDown}
-                      className="bg-slate-700 text-white rounded px-3 py-1 w-16 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                      min="0"
-                      autoFocus
-                    />
-                  ) : (
-                    <span className="text-white font-mono">
-                      {Math.floor(
-                        (tournament.config?.timerDuration ?? 300) / 60
-                      )
-                        .toString()
-                        .padStart(2, "0")}
-                    </span>
-                  )}
-                </div>
-                <span className="text-white">:</span>
-                <div
-                  className="flex items-center gap-1 cursor-pointer hover:bg-slate-700/50 px-3 py-1 rounded transition-colors"
-                  onClick={() => handleEditStart("timer", "seconds")}
-                >
-                  {editingField?.type === "timer" &&
-                  editingField?.part === "seconds" ? (
-                    <input
-                      type="number"
-                      value={editingField.value}
-                      onChange={(e) =>
-                        setEditingField((prev) =>
-                          prev ? { ...prev, value: e.target.value } : null
-                        )
-                      }
-                      onBlur={handleEditComplete}
-                      onKeyDown={handleKeyDown}
-                      className="bg-slate-700 text-white rounded px-3 py-1 w-16 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                      min="0"
-                      max="59"
-                      autoFocus
-                    />
-                  ) : (
-                    <span className="text-white font-mono">
-                      {((tournament.config?.timerDuration ?? 300) % 60)
-                        .toString()
-                        .padStart(2, "0")}
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <label className="text-white font-medium">
-              Enable Overtime Timer
-            </label>
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={tournament.config?.enableOvertimer}
-                disabled={!tournament.config?.enableTimer}
-                onChange={(e) => {
-                  handleUpdateTournament({
-                    ...tournament,
-                    config: {
-                      ...tournament.config!,
-                      enableOvertimer: e.target.checked,
-                    },
-                  });
-                }}
-                className="w-5 h-5 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 disabled:opacity-50"
-              />
-              <div className="flex items-center gap-1">
-                <div
-                  className={`transition-colors rounded ${
-                    tournament.config?.enableTimer &&
-                    tournament.config?.enableOvertimer
-                      ? "cursor-pointer hover:bg-slate-700/50"
-                      : "opacity-50"
-                  }`}
-                >
-                  {editingField?.type === "overtimer" &&
-                  editingField?.part === "minutes" ? (
-                    <input
-                      type="number"
-                      value={editingField.value}
-                      onChange={(e) =>
-                        setEditingField((prev) =>
-                          prev ? { ...prev, value: e.target.value } : null
-                        )
-                      }
-                      onBlur={handleEditComplete}
-                      onKeyDown={handleKeyDown}
-                      className="bg-slate-700 text-white rounded px-3 py-1 w-16 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                      min="0"
-                      autoFocus
-                    />
-                  ) : (
-                    <span
-                      className="text-white font-mono px-3 py-1 rounded"
-                      onClick={() => handleEditStart("overtimer", "minutes")}
-                    >
-                      {Math.floor(
-                        (tournament.config?.overtimerDuration ?? 120) / 60
-                      )
-                        .toString()
-                        .padStart(2, "0")}
-                    </span>
-                  )}
-                </div>
-                <span className="text-white">:</span>
-                <div
-                  className={`transition-colors rounded ${
-                    tournament.config?.enableTimer &&
-                    tournament.config?.enableOvertimer
-                      ? "cursor-pointer hover:bg-slate-700/50"
-                      : "opacity-50"
-                  }`}
-                >
-                  {editingField?.type === "overtimer" &&
-                  editingField?.part === "seconds" ? (
-                    <input
-                      type="number"
-                      value={editingField.value}
-                      onChange={(e) =>
-                        setEditingField((prev) =>
-                          prev ? { ...prev, value: e.target.value } : null
-                        )
-                      }
-                      onBlur={handleEditComplete}
-                      onKeyDown={handleKeyDown}
-                      className="bg-slate-700 text-white rounded px-3 py-1 w-16 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                      min="0"
-                      max="59"
-                      autoFocus
-                    />
-                  ) : (
-                    <span
-                      className="text-white font-mono px-3 py-1 rounded"
-                      onClick={() => handleEditStart("overtimer", "seconds")}
-                    >
-                      {((tournament.config?.overtimerDuration ?? 120) % 60)
-                        .toString()
-                        .padStart(2, "0")}
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <AccessManagementSection
+        tournament={tournament}
+        newUserEmail={newUserEmail}
+        onAddUserByEmail={handleAddUserByEmail}
+        onDeleteUser={handleDelete}
+        setNewUserEmail={setNewUserEmail}
+        onTogglePublic={handleTogglePublic}
+      />
 
       <ErrorModal
         isOpen={errorMessage !== null}
         onClose={() => setErrorMessage(null)}
         message={errorMessage || ""}
+      />
+      <InfoModal
+        isOpen={infoMessage !== null}
+        onClose={() => setInfoMessage(null)}
+        message={infoMessage || ""}
+        title="Info"
       />
     </div>
   );
