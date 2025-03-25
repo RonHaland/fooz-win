@@ -7,8 +7,7 @@ import {
   createTournament,
   deleteTournament,
 } from "@/utils/storage";
-import { PlusIcon } from "@/components/icons/PlusIcon";
-import { TrashIcon } from "@/components/icons/TrashIcon";
+import { PlusIcon, TrashIcon, SearchIcon } from "@/components/icons";
 import Link from "next/link";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import { InfoSection } from "@/components/InfoSection";
@@ -62,13 +61,22 @@ export default function Home() {
           <p className="text-slate-400 text-lg mb-8">
             Tournament management for foosball
           </p>
-          <button
-            onClick={() => setShowNewTournamentModal(true)}
-            className="bg-emerald-800 hover:bg-emerald-700 hover:cursor-pointer text-white font-semibold px-6 py-3 rounded-xl transition-all duration-200 transform hover:scale-105 flex items-center gap-2"
-          >
-            <PlusIcon className="h-5 w-5" />
-            New Tournament
-          </button>
+          <div className="flex gap-4 flex-wrap justify-center">
+            <button
+              onClick={() => setShowNewTournamentModal(true)}
+              className="bg-emerald-800 hover:bg-emerald-700 hover:cursor-pointer text-white font-semibold px-6 py-3 rounded-xl transition-all duration-200 transform hover:scale-105 flex items-center gap-2"
+            >
+              <PlusIcon className="h-5 w-5" />
+              New Tournament
+            </button>
+            <Link
+              href="/tournaments/browse"
+              className="bg-slate-700 hover:bg-slate-600 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-200 transform hover:scale-105 flex items-center gap-2"
+            >
+              <SearchIcon className="h-5 w-5" />
+              Browse Tournaments
+            </Link>
+          </div>
         </div>
 
         {/* Tournaments Grid */}

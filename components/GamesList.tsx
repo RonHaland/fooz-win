@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Game, Player } from "@/types/game";
 import { GameCard } from "./GameCard";
 import { ConfirmModal } from "./ConfirmModal";
-import { unstable_ViewTransition as ViewTransition } from "react";
 
 type GamesListProps = {
   games: Game[];
@@ -28,18 +27,17 @@ export function GamesList({
     <>
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
         {games.toReversed().map((game, index) => (
-          <ViewTransition name={`game-${game.id}`} key={game.id}>
-            <GameCard
-              game={game}
-              index={games.length - 1 - index}
-              players={players}
-              onDelete={() => setDeleteConfirmation(game.id)}
-              onScoreChange={(teamIndex, newScore) =>
-                onScoreChange(game.id, teamIndex, newScore)
-              }
-              isAdmin={isAdmin}
-            />
-          </ViewTransition>
+          <GameCard
+            key={game.id}
+            game={game}
+            index={games.length - 1 - index}
+            players={players}
+            onDelete={() => setDeleteConfirmation(game.id)}
+            onScoreChange={(teamIndex, newScore) =>
+              onScoreChange(game.id, teamIndex, newScore)
+            }
+            isAdmin={isAdmin}
+          />
         ))}
       </section>
       <ConfirmModal

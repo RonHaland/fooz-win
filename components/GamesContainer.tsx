@@ -5,7 +5,6 @@ import { Tournament } from "@/types/game";
 import { GamesList } from "./GamesList";
 import { ErrorModal } from "./ErrorModal";
 import { GameCard } from "./GameCard";
-import { unstable_ViewTransition as ViewTransition } from "react";
 
 type GamesContainerProps = {
   tournament: Tournament;
@@ -67,54 +66,50 @@ export function GamesContainer({
   const gameHistory = tournament.games.slice(0, -1);
 
   return (
-    <ViewTransition>
-      <div className="space-y-8">
-        {/* Current Game Section */}
-        {currentGame && (
-          <section className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              <h3 className="text-xl font-bold text-white">Current Game</h3>
-            </div>
-            <div className="bg-slate-800/50 rounded-xl border-2 border-emerald-500/50 sm:p-4 shadow-lg shadow-emerald-500/10">
-              <ViewTransition name={`game-${currentGame.id}`}>
-                <GameCard
-                  game={currentGame}
-                  index={tournament.games.length - 1}
-                  players={tournament.players}
-                  onDelete={() => handleDeleteGame(currentGame.id)}
-                  onScoreChange={(teamIndex, newScore) =>
-                    handleScoreChange(currentGame.id, teamIndex, newScore)
-                  }
-                  isAdmin={isAdmin}
-                />
-              </ViewTransition>
-            </div>
-          </section>
-        )}
+    <div className="space-y-8">
+      {/* Current Game Section */}
+      {currentGame && (
+        <section className="space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            <h3 className="text-xl font-bold text-white">Current Game</h3>
+          </div>
+          <div className="bg-slate-800/50 rounded-xl border-2 border-emerald-500/50 sm:p-4 shadow-lg shadow-emerald-500/10">
+            <GameCard
+              game={currentGame}
+              index={tournament.games.length - 1}
+              players={tournament.players}
+              onDelete={() => handleDeleteGame(currentGame.id)}
+              onScoreChange={(teamIndex, newScore) =>
+                handleScoreChange(currentGame.id, teamIndex, newScore)
+              }
+              isAdmin={isAdmin}
+            />
+          </div>
+        </section>
+      )}
 
-        {/* Game History Section */}
-        {gameHistory.length > 0 && (
-          <section className="space-y-4">
-            <h3 className="text-xl font-bold text-white/80">Game History</h3>
-            <div className="bg-slate-800/30 rounded-xl sm:border border-slate-700/50 sm:p-4">
-              <GamesList
-                games={gameHistory}
-                players={tournament.players}
-                onDeleteGame={handleDeleteGame}
-                onScoreChange={handleScoreChange}
-                isAdmin={isAdmin}
-              />
-            </div>
-          </section>
-        )}
+      {/* Game History Section */}
+      {gameHistory.length > 0 && (
+        <section className="space-y-4">
+          <h3 className="text-xl font-bold text-white/80">Game History</h3>
+          <div className="bg-slate-800/30 rounded-xl sm:border border-slate-700/50 sm:p-4">
+            <GamesList
+              games={gameHistory}
+              players={tournament.players}
+              onDeleteGame={handleDeleteGame}
+              onScoreChange={handleScoreChange}
+              isAdmin={isAdmin}
+            />
+          </div>
+        </section>
+      )}
 
-        <ErrorModal
-          isOpen={errorMessage !== null}
-          onClose={() => setErrorMessage(null)}
-          message={errorMessage || ""}
-        />
-      </div>
-    </ViewTransition>
+      <ErrorModal
+        isOpen={errorMessage !== null}
+        onClose={() => setErrorMessage(null)}
+        message={errorMessage || ""}
+      />
+    </div>
   );
 }

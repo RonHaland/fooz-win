@@ -46,6 +46,7 @@ export interface User {
 export type TournamentShortInfo = {
   id: string;
   name: string;
-  isPublic: boolean;
+  isPublic?: boolean;
   createdAt: string;
+  ownerName?: string;
 };
